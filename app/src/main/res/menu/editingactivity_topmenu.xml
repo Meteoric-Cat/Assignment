@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/mi_camera"
+        android:title=""
+        app:showAsAction="always"
+        android:icon="@drawable/camera"/>
+
+    <item
+        android:id="@+id/mi_color"
+        android:title=""
+        app:showAsAction="always"
+        android:icon="@drawable/color"/>
+
+    <item
+        android:id="@+id/mi_tick"
+        android:title=""
+        app:showAsAction="always"
+        android:icon="@drawable/tick"/>
+
+    <item
+        android:id="@+id/mi_newNote"
+        android:title="@string/mi_newNote"/>
+
+</menu>
