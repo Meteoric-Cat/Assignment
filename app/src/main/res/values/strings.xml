@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Note</string>
+
+    <!--Editing Activity-->
+    <string name="et_titleHint">Title</string>
+    <string name="et_contentHint">Note</string>
+    <string name="tv_alarmCreator">Alarm</string>
+
+</resources>
