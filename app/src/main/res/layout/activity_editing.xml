@@ -40,7 +40,7 @@
         android:id="@+id/iv_clockIcon"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:background="@drawable/clock"
+        android:background="@drawable/ic_clock"
         android:layout_below="@id/et_content"/>
 
     <TextView
@@ -52,7 +52,7 @@
         android:layout_marginTop="10dp"
         android:text="@string/tv_alarmCreator"
         android:textSize="14sp"
-        android:textColor="@color/colorPurple"
+        android:textColor="@color/colorLightGreen"
         android:textStyle="bold" />
 
     <android.support.design.widget.BottomNavigationView
@@ -63,7 +63,7 @@
         android:background="@color/colorPrimary"
         app:menu="@menu/editingactivity_bottommenu"
         app:itemBackground="@color/colorPrimary"
-        app:itemIconTint="@color/colorPurple"
-        app:itemTextColor="@color/colorPurple"/>
+        app:itemIconTint="@color/colorLightGreen"
+        app:itemTextColor="@color/colorLightGreen"/>
 
 </android.widget.RelativeLayout>

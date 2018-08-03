@@ -5,29 +5,29 @@
     <item
         android:id="@+id/iv_left"
         android:title="Back"
-        android:icon="@drawable/left"
+        android:icon="@drawable/ic_left"
         android:enabled="true"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/iv_share"
         android:title="Share"
-        android:icon="@drawable/share"
+        android:icon="@drawable/ic_share"
         android:enabled="true"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/iv_bin"
         android:title="Delete"
-        android:icon="@drawable/bin"
+        android:icon="@drawable/ic_bin"
         android:enabled="true"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/iv_right"
         android:title="Right"
-        android:icon="@drawable/right"
+        android:icon="@drawable/ic_right"
         android:enabled="true"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
 
 </menu>

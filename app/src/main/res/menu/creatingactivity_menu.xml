@@ -6,18 +6,18 @@
         android:id="@+id/mi_camera"
         android:title=""
         app:showAsAction="always"
-        android:icon="@drawable/camera"/>
+        android:icon="@drawable/ic_camera"/>
 
     <item
         android:id="@+id/mi_color"
         android:title=""
         app:showAsAction="always"
-        android:icon="@drawable/color"/>
+        android:icon="@drawable/ic_color"/>
 
     <item
         android:id="@+id/mi_tick"
         android:title=""
         app:showAsAction="always"
-        android:icon="@drawable/tick"/>
+        android:icon="@drawable/ic_tick"/>
 
 </menu>
