@@ -24,15 +24,17 @@ import com.meteor.assignment.db.NoteTable;
 import com.meteor.assignment.model.Note;
 
 public class MainActivity extends AppCompatActivity {
+    public static final int CREATING_REQUEST = 1;
+    public static final int CREATING_OK = 1;
+    public static final int CREATING_FAIL = 2;
+
+    public static final int EDITING_REQUEST = 2;
+    public static final int EDITING_OK = 1;
+    public static final int EDITING_FAIL = 2;
+    public static final int EDITING_NEW_NOTE = 3;
+    public static final int EDITING_DELETE = 4;
+
     private static final int SPAN_COUNT = 2;
-
-    private static final int CREATING_REQUEST = 1;
-    private static final int CREATING_OK = 1;
-    private static final int CREATING_FAIL = 2;
-
-    private static final int EDITING_REQUEST = 2;
-    private static final int EDITING_OK = 1;
-    private static final int EDITING_FAIL = 2;
 
     private static final int QUERY_TYPE = 0;
     private static final int INSERT_TYPE = 1;
@@ -80,9 +82,9 @@ public class MainActivity extends AppCompatActivity {
                 if (child != null) {
                     MainActivityRvAdapter.CustomViewHolder customViewHolder =
                             (MainActivityRvAdapter.CustomViewHolder) recyclerView.getChildViewHolder(child);
-                    clickedNoteID=customViewHolder.getDataID();
+                    clickedNoteID = customViewHolder.getDataID();
 
-                    Intent intent=new Intent(MainActivity.this, EditingActivity.class);
+                    Intent intent = new Intent(MainActivity.this, EditingActivity.class);
                     intent.putExtra(getString(R.string.note_key), rvAdapter.getItem(clickedNoteID));
                     startActivityForResult(intent, EDITING_REQUEST);
 
@@ -135,6 +137,29 @@ public class MainActivity extends AppCompatActivity {
                     //else...
                 }
                 break;
+            }
+            case EDITING_REQUEST: {
+                switch (requestCode) {
+                    case CREATING_OK: {
+                        Note note = data.getParcelableExtra(getString(R.string.note_key));
+                        if (note != null) {
+                            DatabaseTask databaseTask = new DatabaseTask(UPDATE_TYPE, clickedNoteID + 1,
+                                    note, false, NoteTable.getInstance().TABLE_URI);
+                            databaseTask.execute();
+                        }
+                        break;
+                    }
+                    case EDITING_DELETE: {
+                        DatabaseTask databaseTask = new DatabaseTask(DELETE_TYPE, clickedNoteID + 1,
+                                null, false, NoteTable.getInstance().TABLE_URI);
+                        databaseTask.execute();
+                        break;
+                    }
+                    case EDITING_NEW_NOTE: {
+                        Intent intent = new Intent(this, CreatingActivity.class);
+                        startActivityForResult(intent, CREATING_REQUEST);
+                    }
+                }
             }
         }
     }

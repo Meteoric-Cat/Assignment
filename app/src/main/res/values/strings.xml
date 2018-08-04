@@ -4,10 +4,18 @@
     <!--Parcel key-->
     <string name="note_key">Supernote</string>
 
-    <!--Editing Activity-->
+    <!--Creating, Editing Activity-->
     <string name="et_titleHint">Title</string>
     <string name="et_contentHint">Note</string>
     <string name="tv_alarmCreator">Alarm</string>
     <string name="mi_newNote">New Note</string>
+
+    <!--Editing Activity-->
+    <!--DeletionAlertDialog-->
+    <string name="dag_title">Confirm Delete</string>
+    <string name="dag_message">Are you sure you want to delete this note?</string>
+    <string name="dag_posButtom">OK</string>
+    <string name="dag_nevButton">Cancel</string>
+
 
 </resources>
