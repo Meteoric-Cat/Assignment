@@ -10,4 +10,10 @@
     <integer name="EDITING_OK">1</integer>
     <integer name="EDITING_FAIL">2</integer>
 
+    <!--Database operation type-->
+    <integer name="QUERY_TYPE">0</integer>
+    <integer name="INSERT_TYPE">1</integer>
+    <integer name="UPDATE_TYPE">2</integer>
+    <integer name="DELETE_TYPE">3</integer>
+
 </resources>

@@ -36,7 +36,8 @@ public class MainActivityRvAdapter extends RecyclerView.Adapter<MainActivityRvAd
 
     @Override
     public void onBindViewHolder(@NonNull CustomViewHolder customViewHolder, int position) {
-        customViewHolder.setData(this.noteList.get(this.noteListSize - position - 1));
+        customViewHolder.setViews(this.noteList.get(this.noteListSize - position - 1));
+        customViewHolder.dataID=position;
     }
 
     @Override
@@ -50,10 +51,23 @@ public class MainActivityRvAdapter extends RecyclerView.Adapter<MainActivityRvAd
         this.noteListSize++;
     }
 
+    public void removeItem(int position) {
+        this.noteList.remove(position);
+        this.noteListSize--;
+        this.notifyItemRemoved(this.noteListSize - position);
+        this.notifyItemRangeChanged(this.noteListSize - position, this.noteListSize);
+    }
+
+    public void updateItem(int position, Note note) {
+        this.noteList.set(position, note);
+        this.notifyItemChanged(this.noteListSize - position - 1);
+    }
+
     public class CustomViewHolder extends RecyclerView.ViewHolder {
         RelativeLayout rlItem;
         TextView tvNoteTitle, tvNoteContent, tvNoteTime;
         ImageView ivClockIcon;
+        int dataID;
 
         public CustomViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -63,11 +77,12 @@ public class MainActivityRvAdapter extends RecyclerView.Adapter<MainActivityRvAd
             tvNoteTitle = itemView.findViewById(R.id.tv_noteTitle);
             tvNoteContent = itemView.findViewById(R.id.tv_noteContent);
             tvNoteTime = itemView.findViewById(R.id.tv_noteTime);
-
             ivClockIcon = itemView.findViewById(R.id.iv_clockIcon);
+
+            dataID=-1;
         }
 
-        public void setData(Note note) {
+        public void setViews(Note note) {
             tvNoteTitle.setText(note.getTitle());
             tvNoteContent.setText(note.getContent());
             tvNoteTime.setText(note.getBirthTime());
@@ -77,5 +92,6 @@ public class MainActivityRvAdapter extends RecyclerView.Adapter<MainActivityRvAd
             else
                 ivClockIcon.setVisibility(View.VISIBLE);
         }
+
     }
 }

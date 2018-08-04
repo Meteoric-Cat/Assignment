@@ -14,12 +14,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 public class CustomContentProvider extends ContentProvider {
-    public static final String PROVIDER_NAME = "com.meteor.assignment.CustomContentProvider";
+    public static final String PROVIDER_NAME = "com.meteor.assignment.db.CustomContentProvider";
 
     private static final String DATABASE_NAME = "NOTE_DATABASE";
     private static int DATABASE_VERSION = 1;
 
-    private static final String INSERT_EXCEPTION_MESSAGE = "Could not insert into ";
+    private static final String INSERT_EXCEPTION_MESSAGE = "Could not insert into ";                //display to developer
     private static final String URI_EXCEPTION_MESSAGE_1 = " is unknown";
     private static final String URI_EXCPETION_MESSAGE_2 = " is not supported";
 

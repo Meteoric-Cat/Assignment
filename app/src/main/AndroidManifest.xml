@@ -19,6 +19,10 @@
         </activity>
         <activity android:name=".CreatingActivity"></activity>
         <activity android:name=".EditingActivity"></activity>
+
+        <provider
+            android:authorities="com.meteor.assignment.db.CustomContentProvider"
+            android:name="com.meteor.assignment.db.CustomContentProvider"/>
     </application>
 
 </manifest>
