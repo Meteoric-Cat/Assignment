@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Note</string>
 
+    <!--Parcel key-->
+    <string name="note_key">Supernote</string>
+
     <!--Editing Activity-->
     <string name="et_titleHint">Title</string>
     <string name="et_contentHint">Note</string>

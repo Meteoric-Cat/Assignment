@@ -15,7 +15,7 @@
         android:icon="@drawable/ic_color"/>
 
     <item
-        android:id="@+id/mi_tick"
+        android:id="@+id/mi_check"
         android:title=""
         app:showAsAction="always"
         android:icon="@drawable/ic_tick"/>

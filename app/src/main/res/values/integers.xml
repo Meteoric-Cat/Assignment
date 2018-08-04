@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--For Creating-->
+    <integer name="CREATING_REQUEST">1</integer>
+    <integer name="CREATING_OK">1</integer>
+    <integer name="CREATING_FAIL">2</integer>
+
+    <!--For Editing-->
+    <integer name="EDITING_REQUEST">2</integer>
+    <integer name="EDITING_OK">1</integer>
+    <integer name="EDITING_FAIL">2</integer>
+
+</resources>
