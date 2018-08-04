@@ -16,14 +16,14 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class CreatingActivity extends AppCompatActivity {
-    private static final String INVALID_INPUT = "";
-    private static final String DMY_FORMAT = "dd/MM/yyyy";
-    private static final String HM_FORMAT = "HH:mm";
+    protected static final String INVALID_INPUT = "";
+    protected static final String DMY_FORMAT = "dd/MM/yyyy";
+    protected static final String HM_FORMAT = "HH:mm";
 
-    private TextView tvTime, tvAlarm;
-    private EditText etTitle, etContent;
+    protected TextView tvTime, tvAlarm;
+    protected EditText etTitle, etContent;
 
-    private String alarmTime, imageUrl;
+    protected String alarmTime, imageUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +34,7 @@ public class CreatingActivity extends AppCompatActivity {
         initLogicComponents();
     }
 
-    private void initUIViews() {
+    protected void initUIViews() {
         etTitle = findViewById(R.id.et_title);
         etContent = findViewById(R.id.et_content);
 
@@ -42,7 +42,7 @@ public class CreatingActivity extends AppCompatActivity {
         tvAlarm = findViewById(R.id.tv_alarm);
     }
 
-    private void initLogicComponents() {
+    protected void initLogicComponents() {
         alarmTime = "NULL";
         imageUrl = "NULL";
     }

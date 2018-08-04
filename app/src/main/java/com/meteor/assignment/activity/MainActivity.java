@@ -48,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
     private MainActivityRvAdapter rvAdapter;
     private RecyclerView.LayoutManager rvLayoutManager;
 
+    private int clickedNoteID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,7 +80,12 @@ public class MainActivity extends AppCompatActivity {
                 if (child != null) {
                     MainActivityRvAdapter.CustomViewHolder customViewHolder =
                             (MainActivityRvAdapter.CustomViewHolder) recyclerView.getChildViewHolder(child);
-                    Toast.makeText(getApplicationContext(), String.valueOf(customViewHolder.getItemId()), Toast.LENGTH_SHORT).show();
+                    clickedNoteID=customViewHolder.getDataID();
+
+                    Intent intent=new Intent(MainActivity.this, EditingActivity.class);
+                    intent.putExtra(getString(R.string.note_key), rvAdapter.getItem(clickedNoteID));
+                    startActivityForResult(intent, EDITING_REQUEST);
+
                     return true;
                 }
                 return false;

@@ -17,8 +17,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CreatingActivity"></activity>
-        <activity android:name=".EditingActivity"></activity>
+        <activity android:name=".CreatingActivity"
+            android:launchMode="singleTop"></activity>
+        <activity android:name=".EditingActivity"
+            android:launchMode="singleTop"></activity>
 
         <provider
             android:authorities="com.meteor.assignment.db.CustomContentProvider"

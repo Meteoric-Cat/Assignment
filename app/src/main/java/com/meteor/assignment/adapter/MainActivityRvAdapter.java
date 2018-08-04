@@ -45,6 +45,10 @@ public class MainActivityRvAdapter extends RecyclerView.Adapter<MainActivityRvAd
         return this.noteListSize;
     }
 
+    public Note getItem(int position) {
+        return this.noteList.get(position);
+    }
+
     public void addItem(Note note) {
         this.noteList.add(note);
         this.notifyItemInserted(0);
@@ -93,5 +97,8 @@ public class MainActivityRvAdapter extends RecyclerView.Adapter<MainActivityRvAd
                 ivClockIcon.setVisibility(View.VISIBLE);
         }
 
+        public int getDataID(){
+            return this.dataID;
+        }
     }
 }
