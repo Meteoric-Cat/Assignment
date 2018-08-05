@@ -64,7 +64,7 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
             setResult(MainActivity.EDITING_NEW_NOTE);
             finish();
         }
-        return false;
+        return true;
     }
 
     @Override
@@ -77,6 +77,18 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
             if (note != null) {
                 etTitle.setText(note.getTitle());
                 etContent.setText(note.getContent());
+
+                String imageUrl = note.getImageUrl();
+                Intent data = new Intent();
+                data.putExtra(getString(R.string.note_url_key), imageUrl);
+
+                if (!note.equals("NULL")) {
+                    if (!imageUrl.startsWith("content://")) {
+                        new ImageLoadingTask(INITIAL_LOADING_TYPE_1).execute(data);
+                    } else {
+                        new ImageLoadingTask(INITIAL_LOADING_TYPE_2).execute(data);
+                    }
+                }
             }
         }
     }

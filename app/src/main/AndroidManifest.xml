@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-feature android:name="android.hardware.camera2.CameraDevice"/>
+    <uses-feature android:name="android.hardware.camera2"/>
 
     <application
         android:allowBackup="true"
@@ -30,6 +30,16 @@
         <provider
             android:authorities="com.meteor.assignment.db.CustomContentProvider"
             android:name="com.meteor.assignment.db.CustomContentProvider"/>
+
+        <provider
+            android:authorities="${applicationId}.com.meteor.assignment.supporter.CustomFileProvider"
+            android:name="android.support.v4.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
     </application>
 
 </manifest>
