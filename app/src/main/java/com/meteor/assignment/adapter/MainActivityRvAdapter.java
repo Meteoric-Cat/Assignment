@@ -77,7 +77,6 @@ public class MainActivityRvAdapter extends RecyclerView.Adapter<MainActivityRvAd
             super(itemView);
 
             rlItem = (RelativeLayout) itemView;
-
             tvNoteTitle = itemView.findViewById(R.id.tv_noteTitle);
             tvNoteContent = itemView.findViewById(R.id.tv_noteContent);
             tvNoteTime = itemView.findViewById(R.id.tv_noteTime);
@@ -91,7 +90,7 @@ public class MainActivityRvAdapter extends RecyclerView.Adapter<MainActivityRvAd
             tvNoteContent.setText(note.getContent());
             tvNoteTime.setText(note.getBirthTime());
 
-            if (note.getAlarmTime().equals(INVALID_ALARM))
+            if (note.getAlarmTime().equals(INVALID_ALARM))                                          //...?...:...
                 ivClockIcon.setVisibility(View.GONE);
             else
                 ivClockIcon.setVisibility(View.VISIBLE);
