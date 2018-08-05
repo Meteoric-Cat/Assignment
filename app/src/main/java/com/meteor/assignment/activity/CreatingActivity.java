@@ -155,34 +155,6 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
 
     @Override
     public void handleTakingPhoto() {
-        //String outPath = Environment.DIRECTORY_PICTURES + "/image_" + noteID + ".jpg";
-//        File outPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-//        File imageFile = new File(outPath, "image_" + noteID + ".jpg");
-//        Log.d("FILE_PATH:", imageFile.toString());
-//
-//        if (!imageFile.exists()) {
-//            try {
-//                imageFile.mkdirs();
-//                imageFile.createNewFile();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                if (!imageFile.exists()) {
-//                    Toast.makeText(getApplicationContext(), IMAGE_TAKING_EXCEPTION, Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//            }
-//        }
-//
-//        String providerPackageName = ".com.meteor.assignment.supporter.CustomFileProvider";
-//        Uri outUri = CustomFileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID +
-//                providerPackageName, imageFile);
-//
-//        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        intent.putExtra(MediaStore.EXTRA_OUTPUT, outUri);
-//        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-//        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-//        startActivityForResult(intent, CAMERA_LOADING_TYPE);
-
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent, CAMERA_LOADING_TYPE);
     }
@@ -233,17 +205,14 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
                 String imageUrl = intent.getStringExtra(getString(R.string.note_url_key));
                 Bitmap bitmap=null;
                 Log.d("IMAGE URL:",imageUrl);
+                BitmapFactory.Options options=new BitmapFactory.Options();
+                options.inPreferredConfig=Bitmap.Config.ARGB_8888;
 
                 if (taskType == INITIAL_LOADING_TYPE_1) {
-                    BitmapFactory.Options options=new BitmapFactory.Options();
-                    options.inPreferredConfig=Bitmap.Config.ARGB_8888;
-
                     bitmap=BitmapFactory.decodeFile(imageUrl, options);
                 } else {
                     Uri uri=Uri.parse(imageUrl);
-                    InputStream inputStream=getContentResolver().openInputStream(uri);
-
-                    bitmap=BitmapFactory.decodeStream(inputStream);
+                    bitmap=BitmapFactory.decodeFile(uri.getPath(), options);
                 }
 
                 ivImage.setImageBitmap(bitmap);
@@ -275,6 +244,7 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
                 bitmap = (Bitmap) intent.getExtras().get(bitmapKey);
 
                 note.setImageUrl(file.getAbsolutePath());
+                Log.d("Image url:",file.getAbsolutePath());
                 ivImage.setImageBitmap(bitmap);
                 resultFlag = true;
             } catch (Exception e) {
@@ -290,6 +260,7 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
 
                 InputStream inputStream = getContentResolver().openInputStream(imageUri);
                 Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                inputStream.close();
 
                 ivImage.setImageBitmap(bitmap);
                 resultFlag = true;

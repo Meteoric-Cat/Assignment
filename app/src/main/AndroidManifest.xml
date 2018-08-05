@@ -29,7 +29,8 @@
 
         <provider
             android:authorities="com.meteor.assignment.db.CustomContentProvider"
-            android:name="com.meteor.assignment.db.CustomContentProvider"/>
+            android:name="com.meteor.assignment.db.CustomContentProvider"
+            android:exported="true"/>
 
         <provider
             android:authorities="${applicationId}.com.meteor.assignment.supporter.CustomFileProvider"

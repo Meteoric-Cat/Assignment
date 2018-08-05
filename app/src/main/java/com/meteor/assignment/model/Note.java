@@ -2,6 +2,7 @@ package com.meteor.assignment.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 public class Note implements Parcelable {
     private String title, content, birthTime, imageUrl, alarmTime;
@@ -101,5 +102,10 @@ public class Note implements Parcelable {
 
     public void setAlarmTime(String alarmTime) {
         this.alarmTime = alarmTime;
+    }
+
+    public void displayInformation() {
+        Log.d("NOTE:",this.title+" ; "+this.content+" ; "
+        +this.birthTime+" ; "+this.imageUrl+" ; "+this.alarmTime);
     }
 }

@@ -73,7 +73,7 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
 
         Intent intent = getIntent();
         if (intent != null) {
-            Note note = intent.getParcelableExtra(getString(R.string.note_key));
+            note = intent.getParcelableExtra(getString(R.string.note_key));
             if (note != null) {
                 etTitle.setText(note.getTitle());
                 etContent.setText(note.getContent());
@@ -82,7 +82,7 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
                 Intent data = new Intent();
                 data.putExtra(getString(R.string.note_url_key), imageUrl);
 
-                if (!note.equals("NULL")) {
+                if (!imageUrl.equals("NULL")) {
                     if (!imageUrl.startsWith("content://")) {
                         new ImageLoadingTask(INITIAL_LOADING_TYPE_1).execute(data);
                     } else {
