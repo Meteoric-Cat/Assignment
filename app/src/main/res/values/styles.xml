@@ -6,6 +6,12 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="actionOverflowButtonStyle">@style/GreenOverflowButtonTheme</item>
+    </style>
+
+    <!--EditingActivity-->
+    <style name="GreenOverflowButtonTheme" parent="@style/Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:tint">@color/colorLightGreen</item>
     </style>
 
 </resources>
