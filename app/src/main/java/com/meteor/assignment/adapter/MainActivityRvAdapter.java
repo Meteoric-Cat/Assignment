@@ -37,7 +37,7 @@ public class MainActivityRvAdapter extends RecyclerView.Adapter<MainActivityRvAd
     @Override
     public void onBindViewHolder(@NonNull CustomViewHolder customViewHolder, int position) {
         customViewHolder.setViews(this.noteList.get(this.noteListSize - position - 1));
-        customViewHolder.dataID=position;
+        customViewHolder.dataID = this.noteListSize - position - 1;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class MainActivityRvAdapter extends RecyclerView.Adapter<MainActivityRvAd
         this.noteList.remove(position);
         this.noteListSize--;
         this.notifyItemRemoved(this.noteListSize - position);
-        this.notifyItemRangeChanged(this.noteListSize - position, this.noteListSize);
+        this.notifyItemRangeChanged(0, this.noteListSize - position - 1);
     }
 
     public void updateItem(int position, Note note) {
@@ -83,7 +83,7 @@ public class MainActivityRvAdapter extends RecyclerView.Adapter<MainActivityRvAd
             tvNoteTime = itemView.findViewById(R.id.tv_noteTime);
             ivClockIcon = itemView.findViewById(R.id.iv_clockIcon);
 
-            dataID=-1;
+            dataID = -1;
         }
 
         public void setViews(Note note) {
@@ -97,7 +97,7 @@ public class MainActivityRvAdapter extends RecyclerView.Adapter<MainActivityRvAd
                 ivClockIcon.setVisibility(View.VISIBLE);
         }
 
-        public int getDataID(){
+        public int getDataID() {
             return this.dataID;
         }
     }

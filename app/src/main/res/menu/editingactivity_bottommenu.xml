@@ -4,28 +4,28 @@
 
     <item
         android:id="@+id/iv_left"
-        android:title="Back"
+        android:title=""
         android:icon="@drawable/ic_left"
         android:enabled="true"
         app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/iv_share"
-        android:title="Share"
+        android:title=""
         android:icon="@drawable/ic_share"
         android:enabled="true"
         app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/iv_bin"
-        android:title="Delete"
+        android:title=""
         android:icon="@drawable/ic_bin"
         android:enabled="true"
         app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/iv_right"
-        android:title="Next"
+        android:title=""
         android:icon="@drawable/ic_right"
         android:enabled="true"
         app:showAsAction="ifRoom"/>

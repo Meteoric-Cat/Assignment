@@ -29,6 +29,7 @@ public class CustomContentProvider extends ContentProvider {
     private static final String NOTE_TYPE = "vnd.android.cursor.item/vnc.meteor.notes";
 
     private static final UriMatcher uriMatcher;
+
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(PROVIDER_NAME, "notes", NOTES_CODE);
@@ -95,7 +96,7 @@ public class CustomContentProvider extends ContentProvider {
             }
             case NOTE_CODE: {
                 String id = uri.getPathSegments().get(ID_POSITION);
-                selection = selection + ((id == null) ? "" : (" AND (" + NoteTable.getInstance().PRIMARY_KEY + " = " + id + ")"));
+                selection = NoteTable.getInstance().PRIMARY_KEY+" = "+id+((selection==null)?"":" AND ("+selection+")");
                 result = this.sqLiteDatabase.query(NoteTable.getInstance().TABLE_NAME,
                         columns, selection, selectionArgs, null, null, sortOrder);
                 break;
@@ -117,7 +118,7 @@ public class CustomContentProvider extends ContentProvider {
             }
             case NOTE_CODE: {
                 String id = uri.getPathSegments().get(ID_POSITION);
-                selection = selection + ((id == null) ? "" : (" AND (" + NoteTable.getInstance().PRIMARY_KEY + " = " + id + ")"));
+                selection = NoteTable.getInstance().PRIMARY_KEY+" = "+id+((selection==null)?"":" AND ("+selection+")");
                 result = this.sqLiteDatabase.update(NoteTable.getInstance().TABLE_NAME,
                         contentValues, selection, selectionArgs);
                 break;
@@ -141,10 +142,10 @@ public class CustomContentProvider extends ContentProvider {
             }
             case NOTE_CODE: {
                 String id = uri.getPathSegments().get(ID_POSITION);
-                selection = selection + ((id == null) ? "" : ("AND (" + NoteTable.getInstance().PRIMARY_KEY + " = " + id + ")"));
+                selection = NoteTable.getInstance().PRIMARY_KEY+" = "+id+((selection==null)?"":" AND ("+selection+")");
                 result = this.sqLiteDatabase.delete(NoteTable.getInstance().TABLE_NAME, selection, selectionArgs);
 
-                String update1 = "UPDATE SQLITE_SEQUENCE SET " + NoteTable.getInstance().PRIMARY_KEY +
+                String update1 = "UPDATE " + NoteTable.getInstance().TABLE_NAME + " SET " + NoteTable.getInstance().PRIMARY_KEY +
                         " = (" + NoteTable.getInstance().PRIMARY_KEY + "-1) WHERE " + NoteTable.getInstance().PRIMARY_KEY + " > " + id;
                 this.sqLiteDatabase.execSQL(update1);
 

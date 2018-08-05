@@ -1,26 +1,18 @@
 package com.meteor.assignment.activity;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.internal.BottomNavigationItemView;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.DialogFragment;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 
+import com.meteor.assignment.fragment.DeletionAlertDialog;
 import com.meteor.assignment.model.Note;
 
-public class EditingActivity extends CreatingActivity {
-    private static final String DIALOG_BUNDLE_KEY = "Meteor";
-
-    private static final String ALERT_DIALOG_TAG="Alert dialog";
+public class EditingActivity extends CreatingActivity implements DeletionAlertDialog.ClickHandler {
+    private static final String ALERT_DIALOG_TAG = "Alert dialog";
 
     private BottomNavigationView bottomNavigationView;
     private DeletionAlertDialog deletionAlertDialog;
@@ -39,21 +31,18 @@ public class EditingActivity extends CreatingActivity {
         super.initUIViews();
 
         bottomNavigationView = findViewById(R.id.bnv_bottomMenu);
-        deletionAlertDialog=DeletionAlertDialog.newInstance(
-                getString(R.string.dag_title),
-                getString(R.string.dag_message),
-                getString(R.string.dag_posButtom),
-                getString(R.string.dag_nevButton)
-        );
+        deletionAlertDialog = new DeletionAlertDialog();
     }
 
     private void initUIListeners() {
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch(menuItem.getItemId()) {
+                switch (menuItem.getItemId()) {
                     case R.id.iv_bin:
+                        getSupportFragmentManager().beginTransaction();
                         deletionAlertDialog.show(getSupportFragmentManager(), ALERT_DIALOG_TAG);
+                        break;
                 }
                 return true;
             }
@@ -92,55 +81,10 @@ public class EditingActivity extends CreatingActivity {
         }
     }
 
-    protected void handleDeletion() {
+    public void handleDeletion() {
+        deletionAlertDialog.dismiss();
         setResult(MainActivity.EDITING_DELETE);
         finish();
     }
 
-    protected void cancelDeletion() {
-
-    }
-
-    public static class DeletionAlertDialog extends DialogFragment {
-        static DeletionAlertDialog newInstance(String title, String message, String posButtomName, String negButtomName) {
-            String[] temp = new String[4];
-            temp[0] = title;
-            temp[1] = message;
-            temp[2] = posButtomName;
-            temp[3] = negButtomName;
-
-            Bundle bundle = new Bundle();
-            bundle.putStringArray(DIALOG_BUNDLE_KEY, temp);
-
-            DeletionAlertDialog dialog = new DeletionAlertDialog();
-            dialog.setArguments(bundle);
-            return dialog;
-        }
-
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-            String[] temp = getArguments().getStringArray(DIALOG_BUNDLE_KEY);
-
-            if (temp.length >= 4) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle(temp[0])
-                        .setMessage(temp[1])
-                        .setPositiveButton(temp[2], new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int which) {
-                                ((EditingActivity)getActivity()).handleDeletion();
-                            }
-                        })
-                        .setNegativeButton(temp[3],new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                ((EditingActivity)getActivity()).cancelDeletion();
-                            }
-                        });
-                return builder.create();
-            }
-            return null;
-        }
-    }
 }
