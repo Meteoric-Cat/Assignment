@@ -211,6 +211,8 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
                 if (taskType == INITIAL_LOADING_TYPE_1) {
                     bitmap=BitmapFactory.decodeFile(imageUrl, options);
                 } else {
+
+                    //error here
                     Uri uri=Uri.parse(imageUrl);
                     bitmap=BitmapFactory.decodeFile(uri.getPath(), options);
                 }
