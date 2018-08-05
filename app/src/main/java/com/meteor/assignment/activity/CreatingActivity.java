@@ -2,6 +2,7 @@ package com.meteor.assignment.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -45,8 +46,12 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
 
     protected static final String IMAGE_LOADING_EXCEPTION = "Can't load the image";                 //display to user
     protected static final String IMAGE_TAKING_EXCEPTION = "Can't create image with camera";
+    protected static final String IMAGE_LOADING_ANNOUNCEMENT="Reopen to see the added image.";
 
     protected static final int INVALID_NOTE_ID = -1;
+
+    protected static final int IMAGE_WIDTH = 200;
+    protected static final int IMAGE_HEIGHT = 200;
 
     protected TextView tvTime, tvAlarm;
     protected EditText etTitle, etContent;
@@ -168,7 +173,7 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
         startActivityForResult(intent, GALLERY_LOADING_TYPE);
     }
 
-    public class ImageLoadingTask extends AsyncTask<Intent, Void, Void> {
+    public class ImageLoadingTask extends AsyncTask<Intent, Void, Bitmap> {
         private boolean resultFlag;
         private int taskType;
 
@@ -178,53 +183,54 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
         }
 
         @Override
-        protected Void doInBackground(Intent... intents) {
+        protected Bitmap doInBackground(Intent... intents) {
             int targetID = 0;
             resultFlag = false;
+            Bitmap result = null;
 
             switch (taskType) {
                 case INITIAL_LOADING_TYPE_1:
                 case INITIAL_LOADING_TYPE_2: {
-                    handleInitialLoading(intents[targetID]);
+                    result = handleInitialLoading(intents[targetID]);
                     break;
                 }
                 case CAMERA_LOADING_TYPE: {
-                    handleCameraLoading(intents[targetID]);
+                    result = handleCameraLoading(intents[targetID]);
                     break;
                 }
                 case GALLERY_LOADING_TYPE: {
-                    handleGalleryLoading(intents[targetID]);
+                    result = handleGalleryLoading(intents[targetID]);
                     break;
                 }
+            }
+            return result;
+        }
+
+        private Bitmap handleInitialLoading(Intent intent) {
+            try {
+                String imageUrl = intent.getStringExtra(getString(R.string.note_url_key));
+                Bitmap bitmap = null;
+                Log.d("IMAGE URL:", imageUrl);
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+
+                if (taskType == INITIAL_LOADING_TYPE_1) {
+                    bitmap = BitmapFactory.decodeFile(imageUrl, options);
+                } else {
+                    Uri uri = Uri.parse(imageUrl);
+                    bitmap = getFileBitmapFromUri(uri);
+                }
+
+                Bitmap result = Bitmap.createScaledBitmap(bitmap, IMAGE_WIDTH, IMAGE_HEIGHT, true);
+                resultFlag = true;
+                return result;
+            } catch (Exception e) {
+                e.printStackTrace();
             }
             return null;
         }
 
-        private void handleInitialLoading(Intent intent) {
-            try {
-                String imageUrl = intent.getStringExtra(getString(R.string.note_url_key));
-                Bitmap bitmap=null;
-                Log.d("IMAGE URL:",imageUrl);
-                BitmapFactory.Options options=new BitmapFactory.Options();
-                options.inPreferredConfig=Bitmap.Config.ARGB_8888;
-
-                if (taskType == INITIAL_LOADING_TYPE_1) {
-                    bitmap=BitmapFactory.decodeFile(imageUrl, options);
-                } else {
-
-                    //error here
-                    Uri uri=Uri.parse(imageUrl);
-                    bitmap=BitmapFactory.decodeFile(uri.getPath(), options);
-                }
-
-                ivImage.setImageBitmap(bitmap);
-                resultFlag=true;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        private void handleCameraLoading(Intent intent) {
+        private Bitmap handleCameraLoading(Intent intent) {
             try {
                 String bitmapKey = "data";
                 Bitmap bitmap = (Bitmap) intent.getExtras().get(bitmapKey);
@@ -244,37 +250,106 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
                 fileOutputStream.close();
 
                 bitmap = (Bitmap) intent.getExtras().get(bitmapKey);
+                Bitmap result = Bitmap.createScaledBitmap(bitmap, IMAGE_WIDTH, IMAGE_HEIGHT, true);
 
                 note.setImageUrl(file.getAbsolutePath());
-                Log.d("Image url:",file.getAbsolutePath());
-                ivImage.setImageBitmap(bitmap);
+                //Log.d("Image url:",file.getAbsolutePath());
+
                 resultFlag = true;
+                return result;
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            return null;
         }
 
-        private void handleGalleryLoading(Intent intent) {                                            //gallery case
+        private Bitmap handleGalleryLoading(Intent intent) {                                            //gallery case
             try {
                 Uri imageUri = intent.getData();
                 //Log.d("URI:", imageUri.toString());
-                note.setImageUrl(imageUri.toString());
+//                note.setImageUrl(imageUri.toString());
+//
+//                Bitmap bitmap = getFileBitmapFromUri(imageUri);
 
-                InputStream inputStream = getContentResolver().openInputStream(imageUri);
-                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                inputStream.close();
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                String path = getRealPathFromUri(imageUri);
 
-                ivImage.setImageBitmap(bitmap);
+                note.setImageUrl(path);
+                Bitmap bitmap = BitmapFactory.decodeFile(path, options);
+                Bitmap result = Bitmap.createScaledBitmap(bitmap, IMAGE_WIDTH, IMAGE_HEIGHT, true);
+
                 resultFlag = true;
+                return result;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        private Bitmap getFileBitmapFromUri(Uri uri) {
+            try {
+                InputStream inputStream = getContentResolver().openInputStream(uri);
+                Bitmap imageBitmap = BitmapFactory.decodeStream(inputStream);
+                inputStream.close();
+                return imageBitmap;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        private void saveData(Bitmap bitmap) {
+            try {
+                String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/images";
+                File outFile = new File(filePath);
+                if (!outFile.exists()) {
+                    outFile.mkdirs();
+                }
+
+                String imageFileName = "image_" + noteID + ".jpg";
+                File file = new File(filePath, imageFileName);
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
+                note.setImageUrl(file.getAbsolutePath());
+
+                fileOutputStream.flush();
+                fileOutputStream.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
+        private String getRealPathFromUri(Uri uri) {
+            Cursor cursor = null;
+            try {
+                String[] projection = {MediaStore.Images.Media.DATA};
+                cursor = getContentResolver().query(uri, projection, null, null, null);
+
+                if (cursor != null && cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+
+                    cursor.close();
+                    return path;
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
         @Override
-        protected void onPostExecute(Void aVoid) {
+        protected void onPostExecute(Bitmap result) {
             if (resultFlag) {
-                ivImage.setVisibility(View.VISIBLE);
+                if (result != null) {
+                    ivImage.setImageBitmap(result);                                                 //can not set in background thread
+                    ivImage.invalidate();
+                    ivImage.setVisibility(View.VISIBLE);
+                    Toast.makeText(getApplicationContext(), IMAGE_LOADING_ANNOUNCEMENT, Toast.LENGTH_SHORT).show();
+                }
             } else {
                 Toast.makeText(getApplicationContext(), IMAGE_LOADING_EXCEPTION, Toast.LENGTH_SHORT).show();
             }
