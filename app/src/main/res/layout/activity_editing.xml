@@ -65,6 +65,39 @@
         android:textColor="@color/colorLightGreen"
         android:textStyle="bold" />
 
+    <android.widget.LinearLayout
+        android:id="@+id/ll_alarmSetter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/iv_clockIcon"
+        android:layout_alignTop="@id/iv_clockIcon"
+        android:visibility="visible"
+        android:orientation="horizontal"
+        android:weightSum="4">
+
+        <Spinner
+            android:id="@+id/sp_dmyPicker"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:background="@color/colorRedGray"/>
+
+        <Spinner
+            android:id="@+id/sp_hmPicker"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:background="@color/colorRedGray"/>
+
+        <ImageView
+            android:id="@+id/iv_setterClose"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/ic_close"/>
+
+    </android.widget.LinearLayout>
+
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bnv_bottomMenu"
         android:layout_width="match_parent"

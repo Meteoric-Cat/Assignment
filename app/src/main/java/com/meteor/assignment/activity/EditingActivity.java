@@ -35,7 +35,7 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
         setContentView(R.layout.activity_editing);
 
         initUIViews();
-        initUIListeners();
+        initUIListeners2();
     }
 
     @Override
@@ -46,7 +46,8 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
         deletionAlertDialog = new DeletionAlertDialog();
     }
 
-    private void initUIListeners() {
+    protected void initUIListeners2() {
+
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
