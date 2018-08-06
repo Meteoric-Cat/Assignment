@@ -59,7 +59,7 @@ public class MainActivityRvAdapter extends RecyclerView.Adapter<MainActivityRvAd
         this.noteList.remove(position);
         this.noteListSize--;
         this.notifyItemRemoved(this.noteListSize - position);
-        this.notifyItemRangeChanged(0, this.noteListSize - position - 1);
+        this.notifyItemRangeChanged(0, this.noteListSize - position);
     }
 
     public void updateItem(int position, Note note) {
