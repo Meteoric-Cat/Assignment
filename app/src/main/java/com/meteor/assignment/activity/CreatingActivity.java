@@ -1,6 +1,9 @@
 package com.meteor.assignment.activity;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -18,10 +21,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.meteor.assignment.configuration.ActivityConfiguration;
@@ -64,44 +70,81 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
 
     protected CameraOptionDialog cameraOptionDialog;
     protected BackgroundColorDialog backgroundColorDialog;
+    protected DatePickerDialog datePickerDialog;
+    protected TimePicker timePicker;
+    protected TimePickerDialog timePickerDialog;
 
     protected Note note;
     protected int noteID;
-    protected boolean childCheck=false;
+    //protected boolean childCheck=false;                                                           //use instead of instanceof function
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (!childCheck) {
+        if (!(this instanceof EditingActivity)) {                                                   //or getClass to check
             setContentView(R.layout.activity_creating);
         } else {
             setContentView(R.layout.activity_editing);
         }
 
-        Log.d("PARENT:","START");
+        Log.d("PARENT:", "START");
         initUIViews();
         initUIListeners();
         initLogicComponents();
     }
 
     protected void initUIViews() {
-        Log.d("PARENT:","GO HERE");
+        Log.d("PARENT:", "GO HERE");
         etTitle = findViewById(R.id.et_title);
         etContent = findViewById(R.id.et_content);
         tvTime = findViewById(R.id.tv_time);
         tvAlarm = findViewById(R.id.tv_alarm);
         ivImage = findViewById(R.id.iv_photo);
 
-        spDMYPicker = findViewById(R.id.sp_dmyPicker);
-        spHMPicker = findViewById(R.id.sp_hmPicker);
-        ivSetterClose = findViewById(R.id.iv_setterClose);
+        initAlarmGroup();
 
         cameraOptionDialog = new CameraOptionDialog();
         backgroundColorDialog = new BackgroundColorDialog();
+        datePickerDialog = new DatePickerDialog(this);
+
+        timePicker=new TimePicker(this);
+        timePicker.setIs24HourView(true);
+        timePickerDialog = new TimePickerDialog(this, null, 0, 0, true);
+        timePickerDialog.setView(timePicker);
+    }
+
+    protected void initAlarmGroup() {
+        spDMYPicker = findViewById(R.id.sp_dmyPicker);
+        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(this, R.array.sp_dmyPicker, android.R.layout.simple_spinner_item);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spDMYPicker.setAdapter(arrayAdapter);
+
+        spHMPicker = findViewById(R.id.sp_hmPicker);
+        arrayAdapter = ArrayAdapter.createFromResource(this, R.array.sp_hmPicker, android.R.layout.simple_spinner_item);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spHMPicker.setAdapter(arrayAdapter);
+
+        ivSetterClose = findViewById(R.id.iv_setterClose);
     }
 
     protected void initUIListeners() {
+        initOnClickListeners();
+        initDialogListeners();
+        initOnItemSelectedListeners();
+    }
+
+    protected void initDialogListeners(){
+        String btnPositive="Ok";
+        timePickerDialog.setButton(DialogInterface.BUTTON_POSITIVE, btnPositive, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Toast.makeText(getApplicationContext(),timePicker.getHour()+":"+timePicker.getMinute(),Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    protected void initOnClickListeners() {
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -121,6 +164,38 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
 
         ivSetterClose.setOnClickListener(onClickListener);
         tvAlarm.setOnClickListener(onClickListener);
+    }
+
+    protected void initOnItemSelectedListeners() {
+        AdapterView.OnItemSelectedListener onItemSelectedListenerListener = new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String currentItem = parent.getItemAtPosition(position).toString();
+                String lastItem = parent.getItemAtPosition(parent.getCount() - 1).toString();
+                switch (parent.getId()) {
+                    case R.id.sp_dmyPicker: {
+                        if (currentItem.equals(lastItem)) {
+                            datePickerDialog.show();
+                        }
+                        break;
+                    }
+                    case R.id.sp_hmPicker: {
+                        if (currentItem.equals(lastItem)){
+                            timePickerDialog.show();
+                        }
+                        break;
+                    }
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        };
+
+        spDMYPicker.setOnItemSelectedListener(onItemSelectedListenerListener);
+        spHMPicker.setOnItemSelectedListener(onItemSelectedListenerListener);
     }
 
     protected void changeAlarmGroupVisibility(int visibility) {

@@ -7,16 +7,12 @@
         <item>Other</item>
     </string-array>
 
-    <string name="sp_hmPicker">
-        <item>0:00</item>
-        <item>3:00</item>
-        <item>6:00</item>
+    <string-array name="sp_hmPicker">
         <item>9:00</item>
-        <item>12:00</item>
-        <item>15:00</item>
-        <item>18:00</item>
-        <item>21:00</item>
+        <item>13:00</item>
+        <item>17:00</item>
+        <item>20:00</item>
         <item>Other</item>
-    </string>
+    </string-array>
 
 </resources>

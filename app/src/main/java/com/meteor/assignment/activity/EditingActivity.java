@@ -31,10 +31,9 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        this.childCheck=true;
+        //this.childCheck=true;
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_editing);
-
         //initUIViews();
         //initUIListeners();
     }
