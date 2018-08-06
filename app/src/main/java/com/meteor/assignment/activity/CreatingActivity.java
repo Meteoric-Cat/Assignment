@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,7 +59,8 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
 
     protected TextView tvTime, tvAlarm;
     protected EditText etTitle, etContent;
-    protected ImageView ivImage;
+    protected ImageView ivImage,ivSetterClose;
+    protected LinearLayout llAlarmSetter;
 
     protected CameraOptionDialog cameraOptionDialog;
     protected BackgroundColorDialog backgroundColorDialog;
@@ -72,20 +74,44 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
         setContentView(R.layout.activity_creating);
 
         initUIViews();
+        //initUIListeners();
         initLogicComponents();
     }
 
     protected void initUIViews() {
         etTitle = findViewById(R.id.et_title);
         etContent = findViewById(R.id.et_content);
-
         tvTime = findViewById(R.id.tv_time);
         tvAlarm = findViewById(R.id.tv_alarm);
-
         ivImage = findViewById(R.id.iv_photo);
+
+        llAlarmSetter=findViewById(R.id.ll_alarmSetter);
+        ivSetterClose=llAlarmSetter.findViewById(R.id.iv_setterClose);
 
         cameraOptionDialog = new CameraOptionDialog();
         backgroundColorDialog=new BackgroundColorDialog();
+    }
+
+    protected void initUIListeners() {
+        View.OnClickListener onClickListener=new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switch (view.getId()) {
+                    case R.id.tv_alarm:
+                    case R.id.iv_setterClose: {
+                        int visibility=(llAlarmSetter.getVisibility()==View.VISIBLE)?View.GONE:View.VISIBLE;
+                        llAlarmSetter.setVisibility(visibility);
+
+                        visibility=(tvAlarm.getVisibility()==View.VISIBLE)?View.GONE:View.VISIBLE;
+                        tvAlarm.setVisibility(visibility);
+                        break;
+                    }
+                }
+            }
+        };
+
+        ivSetterClose.setOnClickListener(onClickListener);
+        tvAlarm.setOnClickListener(onClickListener);
     }
 
     protected void initLogicComponents() {

@@ -40,13 +40,15 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
 
     @Override
     protected void initUIViews() {
-        super.initUIViews();
-
-        bottomNavigationView = findViewById(R.id.bnv_bottomMenu);
+        //super.initUIViews();                                                                      //was called in super.onCreate
+        bottomNavigationView = (BottomNavigationView) findViewById(R.id.bnv_bottomMenu);
         deletionAlertDialog = new DeletionAlertDialog();
     }
 
-    private void initUIListeners() {
+    @Override
+    protected void initUIListeners() {
+        //super.initUIListeners();
+
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -60,14 +62,14 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
                                 "Content: " + note.getContent() + ";\n" +                           //tested with gmail
                                 "Birth time: " + note.getBirthTime() + ";\n" +
                                 "Alarm time: " + note.getAlarmTime();
-                        Uri uriToSend= Uri.fromFile(new File(note.getImageUrl()));
-                        String chooserName="Share note";
+                        Uri uriToSend = Uri.fromFile(new File(note.getImageUrl()));
+                        String chooserName = "Share note";
 
-                        Intent sharingIntent=new Intent(Intent.ACTION_SEND);
+                        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                         sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        sharingIntent.putExtra(Intent.EXTRA_TEXT,dataToSend);
+                        sharingIntent.putExtra(Intent.EXTRA_TEXT, dataToSend);
                         sharingIntent.setType("image/*");
-                        sharingIntent.putExtra(Intent.EXTRA_STREAM,uriToSend);
+                        sharingIntent.putExtra(Intent.EXTRA_STREAM, uriToSend);
                         startActivity(Intent.createChooser(sharingIntent, chooserName));
                         break;
                     }
