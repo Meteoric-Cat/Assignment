@@ -87,7 +87,8 @@ public class MainActivity extends AppCompatActivity {
 
                     Intent intent = new Intent(MainActivity.this, EditingActivity.class);
                     intent.putExtra(getString(R.string.note_key), rvAdapter.getItem(clickedNoteID));
-                    intent.putExtra(getString(R.string.note_id_key),clickedNoteID);
+                    intent.putExtra(getString(R.string.note_id_key), clickedNoteID);
+                    intent.putExtra(getString(R.string.max_id_key), rvAdapter.getItemCount());
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
                     startActivityForResult(intent, EDITING_REQUEST);
@@ -145,14 +146,20 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
             case EDITING_REQUEST: {
+                if (data != null) {
+                    clickedNoteID = data.getIntExtra(getString(R.string.note_id_key), clickedNoteID);
+                }
                 switch (resultCode) {
                     case CREATING_OK: {
-                        Note note = data.getParcelableExtra(getString(R.string.note_key));
-                        note.displayInformation();
-                        if (note != null) {
-                            DatabaseTask databaseTask = new DatabaseTask(UPDATE_TYPE, clickedNoteID + 1,
-                                    note, false, NoteTable.getInstance().TABLE_URI);
-                            databaseTask.execute();
+                        if (data != null) {
+                            Note note = data.getParcelableExtra(getString(R.string.note_key));
+
+                            note.displayInformation();
+                            if (note != null) {
+                                DatabaseTask databaseTask = new DatabaseTask(UPDATE_TYPE, clickedNoteID + 1,
+                                        note, false, NoteTable.getInstance().TABLE_URI);
+                                databaseTask.execute();
+                            }
                         }
                         break;
                     }
@@ -166,6 +173,7 @@ public class MainActivity extends AppCompatActivity {
                     case EDITING_NEW_NOTE: {
                         Intent intent = new Intent(this, CreatingActivity.class);
                         intent.putExtra(getString(R.string.note_id_key), rvAdapter.getItemCount());
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivityForResult(intent, CREATING_REQUEST);
                         break;
                     }

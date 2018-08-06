@@ -46,7 +46,7 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
 
     protected static final String IMAGE_LOADING_EXCEPTION = "Can't load the image";                 //display to user
     protected static final String IMAGE_TAKING_EXCEPTION = "Can't create image with camera";
-    protected static final String IMAGE_LOADING_ANNOUNCEMENT="Reopen to see the added image.";
+    protected static final String IMAGE_LOADING_ANNOUNCEMENT = "Reopen to see the added image.";
 
     protected static final int INVALID_NOTE_ID = -1;
 
@@ -90,15 +90,18 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
     @Override
     protected void onStart() {
         super.onStart();
-
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DMY_FORMAT + " " + HM_FORMAT);
-        tvTime.setText(simpleDateFormat.format(calendar.getTime()));
+        updateTimeView();
 
         Intent intent = getIntent();
         if (intent != null) {
             noteID = intent.getIntExtra(getString(R.string.note_id_key), INVALID_NOTE_ID);
         }
+    }
+
+    protected void updateTimeView() {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DMY_FORMAT + " " + HM_FORMAT);
+        tvTime.setText(simpleDateFormat.format(calendar.getTime()));
     }
 
     @Override
@@ -131,6 +134,8 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
 
                 Intent intent = new Intent();
                 intent.putExtra(getString(R.string.note_key), note);
+                intent.putExtra(getString(R.string.note_id_key),noteID);
+
                 setResult(getResources().getInteger(R.integer.CREATING_OK), intent);
                 finish();
                 break;
@@ -263,12 +268,12 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
             return null;
         }
 
-        private Bitmap handleGalleryLoading(Intent intent) {                                            //gallery case
+        private Bitmap handleGalleryLoading(Intent intent) {
             try {
                 Uri imageUri = intent.getData();
                 //Log.d("URI:", imageUri.toString());
 //                note.setImageUrl(imageUri.toString());
-//
+//                //getContentResolver.openInputStream does not work when open editing activity because of permission denial
 //                Bitmap bitmap = getFileBitmapFromUri(imageUri);
 
                 BitmapFactory.Options options = new BitmapFactory.Options();
@@ -346,9 +351,11 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
             if (resultFlag) {
                 if (result != null) {
                     ivImage.setImageBitmap(result);                                                 //can not set in background thread
-                    ivImage.invalidate();
                     ivImage.setVisibility(View.VISIBLE);
-                    Toast.makeText(getApplicationContext(), IMAGE_LOADING_ANNOUNCEMENT, Toast.LENGTH_SHORT).show();
+                    //ivImage.invalidate();
+                    if (taskType == GALLERY_LOADING_TYPE) {
+                        Toast.makeText(getApplicationContext(), IMAGE_LOADING_ANNOUNCEMENT, Toast.LENGTH_SHORT).show();
+                    }
                 }
             } else {
                 Toast.makeText(getApplicationContext(), IMAGE_LOADING_EXCEPTION, Toast.LENGTH_SHORT).show();

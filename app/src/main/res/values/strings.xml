@@ -5,6 +5,7 @@
     <string name="note_key">Supernote</string>
     <string name="note_id_key">SuperID</string>
     <string name="note_url_key">Super URL</string>
+    <string name="max_id_key">Max ID</string>
 
     <!--Creating, Editing Activity-->
     <string name="et_titleHint">Title</string>
