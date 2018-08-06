@@ -55,7 +55,7 @@
         android:layout_below="@id/et_content"/>
 
     <TextView
-        android:id="@+id/tv_alarmCreator"
+        android:id="@+id/tv_alarm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/iv_clockIcon"

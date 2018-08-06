@@ -67,18 +67,26 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
 
     protected Note note;
     protected int noteID;
+    protected boolean childCheck=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_creating);
 
+        if (!childCheck) {
+            setContentView(R.layout.activity_creating);
+        } else {
+            setContentView(R.layout.activity_editing);
+        }
+
+        Log.d("PARENT:","START");
         initUIViews();
         initUIListeners();
         initLogicComponents();
     }
 
     protected void initUIViews() {
+        Log.d("PARENT:","GO HERE");
         etTitle = findViewById(R.id.et_title);
         etContent = findViewById(R.id.et_content);
         tvTime = findViewById(R.id.tv_time);

@@ -31,22 +31,25 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        this.childCheck=true;
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_editing);
+        //setContentView(R.layout.activity_editing);
 
-        initUIViews();
-        initUIListeners2();
+        //initUIViews();
+        //initUIListeners();
     }
 
     @Override
     protected void initUIViews() {
-        //super.initUIViews();                                                                      //called in super.onCreate
+        Log.d("CHILD:","GO HERE");
+        super.initUIViews();                                                                      //called in super.onCreate
         bottomNavigationView = findViewById(R.id.bnv_bottomMenu);
         deletionAlertDialog = new DeletionAlertDialog();
     }
 
-    protected void initUIListeners2() {                                                             //cannot override this function
-
+    @Override
+    protected void initUIListeners() {                                                             //cannot override this function
+        super.initUIListeners();
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
