@@ -66,37 +66,33 @@
         android:textColor="@color/colorLightGreen"
         android:textStyle="bold" />
 
-    <android.widget.LinearLayout
-        android:id="@+id/ll_alarmSetter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/iv_clockIcon"
+    <Spinner
+        android:id="@+id/sp_dmyPicker"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
         android:layout_alignTop="@id/iv_clockIcon"
-        android:visibility="gone"
-        android:orientation="horizontal">
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@id/iv_clockIcon"
+        android:background="@color/colorRedGray"
+        android:visibility="gone"/>
 
-        <Spinner
-            android:id="@+id/sp_dmyPicker"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="4"
-            android:background="@color/colorRedGray"/>
+    <Spinner
+        android:id="@+id/sp_hmPicker"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:background="@color/colorRedGray"
+        android:layout_toRightOf="@id/sp_dmyPicker"
+        android:layout_alignTop="@id/sp_dmyPicker"
+        android:layout_marginLeft="10dp"
+        android:visibility="gone"/>
 
-        <Spinner
-            android:id="@+id/sp_hmPicker"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="4"
-            android:background="@color/colorRedGray"/>
-
-        <ImageView
-            android:id="@+id/iv_setterClose"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/ic_close"/>
-
-    </android.widget.LinearLayout>
-
+    <ImageView
+        android:id="@+id/iv_setterClose"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_toRightOf="@id/sp_hmPicker"
+        android:layout_alignTop="@id/sp_hmPicker"
+        android:background="@drawable/ic_close"
+        android:visibility="gone"/>
 
 </android.widget.RelativeLayout>

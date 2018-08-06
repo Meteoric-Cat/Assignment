@@ -40,13 +40,12 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
 
     @Override
     protected void initUIViews() {
-        super.initUIViews();
-
+        //super.initUIViews();                                                                      //called in super.onCreate
         bottomNavigationView = findViewById(R.id.bnv_bottomMenu);
         deletionAlertDialog = new DeletionAlertDialog();
     }
 
-    protected void initUIListeners2() {
+    protected void initUIListeners2() {                                                             //cannot override this function
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override

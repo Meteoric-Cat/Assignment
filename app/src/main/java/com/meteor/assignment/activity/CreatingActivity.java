@@ -20,7 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,7 +41,7 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
     protected static final String HM_FORMAT = "HH:mm";
 
     protected static final String CAMERA_OPTION_DIALOG = "Camera dialog";
-    protected static final String BACKGROUND_COLOR_DIALOG="Background dialog";
+    protected static final String BACKGROUND_COLOR_DIALOG = "Background dialog";
 
     protected static final int INITIAL_LOADING_TYPE_1 = 1;
     protected static final int INITIAL_LOADING_TYPE_2 = 2;
@@ -60,7 +60,7 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
     protected TextView tvTime, tvAlarm;
     protected EditText etTitle, etContent;
     protected ImageView ivImage, ivSetterClose;
-    protected LinearLayout llAlarmSetter;
+    protected Spinner spDMYPicker, spHMPicker;
 
     protected CameraOptionDialog cameraOptionDialog;
     protected BackgroundColorDialog backgroundColorDialog;
@@ -74,12 +74,7 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
         setContentView(R.layout.activity_creating);
 
         initUIViews();
-        try {
-            initUIListeners();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+        initUIListeners();
         initLogicComponents();
     }
 
@@ -90,24 +85,25 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
         tvAlarm = findViewById(R.id.tv_alarm);
         ivImage = findViewById(R.id.iv_photo);
 
-        llAlarmSetter=findViewById(R.id.ll_alarmSetter);
-        ivSetterClose=findViewById(R.id.iv_setterClose);
+        spDMYPicker = findViewById(R.id.sp_dmyPicker);
+        spHMPicker = findViewById(R.id.sp_hmPicker);
+        ivSetterClose = findViewById(R.id.iv_setterClose);
 
         cameraOptionDialog = new CameraOptionDialog();
-        backgroundColorDialog=new BackgroundColorDialog();
+        backgroundColorDialog = new BackgroundColorDialog();
     }
 
     protected void initUIListeners() {
-        View.OnClickListener onClickListener=new View.OnClickListener() {
+        View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 switch (view.getId()) {
                     case R.id.tv_alarm:
                     case R.id.iv_setterClose: {
-                        int visibility=(llAlarmSetter.getVisibility()==View.VISIBLE)?View.GONE:View.VISIBLE;
-                        llAlarmSetter.setVisibility(visibility);
+                        int visibility = (spDMYPicker.getVisibility() == View.VISIBLE) ? View.GONE : View.VISIBLE;
+                        changeAlarmGroupVisibility(visibility);
 
-                        visibility=(tvAlarm.getVisibility()==View.VISIBLE)?View.GONE:View.VISIBLE;
+                        visibility = (tvAlarm.getVisibility() == View.VISIBLE) ? View.GONE : View.VISIBLE;
                         tvAlarm.setVisibility(visibility);
                         break;
                     }
@@ -117,6 +113,13 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
 
         ivSetterClose.setOnClickListener(onClickListener);
         tvAlarm.setOnClickListener(onClickListener);
+    }
+
+    protected void changeAlarmGroupVisibility(int visibility) {
+        ivSetterClose.setVisibility(visibility);
+        spHMPicker.setVisibility(visibility);
+        spDMYPicker.setVisibility(visibility);
+
     }
 
     protected void initLogicComponents() {
@@ -172,7 +175,7 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
 
                 Intent intent = new Intent();
                 intent.putExtra(getString(R.string.note_key), note);
-                intent.putExtra(getString(R.string.note_id_key),noteID);
+                intent.putExtra(getString(R.string.note_id_key), noteID);
 
                 setResult(getResources().getInteger(R.integer.CREATING_OK), intent);
                 finish();

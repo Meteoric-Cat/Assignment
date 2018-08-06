@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Alarm-->
+    <string-array name="sp_dmyPicker">
+        <item>Today</item>
+        <item>Tomorrow</item>
+        <item>Other</item>
+    </string-array>
+
+    <string name="sp_hmPicker">
+        <item>0:00</item>
+        <item>3:00</item>
+        <item>6:00</item>
+        <item>9:00</item>
+        <item>12:00</item>
+        <item>15:00</item>
+        <item>18:00</item>
+        <item>21:00</item>
+        <item>Other</item>
+    </string>
+
+</resources>
