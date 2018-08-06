@@ -142,7 +142,6 @@ public class MainActivity extends AppCompatActivity {
             case CREATING_REQUEST: {
                 if (resultCode == getResources().getInteger(R.integer.CREATING_OK)) {
                     Note note = data.getParcelableExtra(getString(R.string.note_key));
-                    note.displayInformation();
                     if (note != null) {
                         DatabaseTask databaseTask = new DatabaseTask(INSERT_TYPE, MIN_ID, note,
                                 false, NoteTable.getInstance().TABLE_URI);
@@ -161,7 +160,6 @@ public class MainActivity extends AppCompatActivity {
                         if (data != null) {
                             Note note = data.getParcelableExtra(getString(R.string.note_key));
 
-                            note.displayInformation();
                             if (note != null) {
                                 DatabaseTask databaseTask = new DatabaseTask(UPDATE_TYPE, clickedNoteID + 1,
                                         note, false, NoteTable.getInstance().TABLE_URI);

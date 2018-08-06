@@ -104,8 +104,8 @@ public class Note implements Parcelable {
         this.alarmTime = alarmTime;
     }
 
-    public void displayInformation() {
-        Log.d("NOTE:",this.title+" ; "+this.content+" ; "
-        +this.birthTime+" ; "+this.imageUrl+" ; "+this.alarmTime);
-    }
+//    public void displayInformation() {
+//        Log.d("NOTE:",this.title+" ; "+this.content+" ; "
+//        +this.birthTime+" ; "+this.imageUrl+" ; "+this.alarmTime);
+//    }
 }

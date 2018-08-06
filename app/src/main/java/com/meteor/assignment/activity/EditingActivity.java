@@ -3,6 +3,7 @@ package com.meteor.assignment.activity;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,6 +16,8 @@ import android.view.View;
 
 import com.meteor.assignment.db.NoteTable;
 import com.meteor.assignment.fragment.DeletionAlertDialog;
+
+import java.io.File;
 
 public class EditingActivity extends CreatingActivity implements DeletionAlertDialog.ClickHandler {
     private static final String ALERT_DIALOG_TAG = "Alert dialog";
@@ -50,6 +53,22 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
                 switch (menuItem.getItemId()) {
                     case R.id.iv_left: {
                         new QueryTask().execute(new Integer(noteID + 2));
+                        break;
+                    }
+                    case R.id.iv_share: {
+                        String dataToSend = "Title: " + note.getTitle() + ";\n" +                   //can not call String.join
+                                "Content: " + note.getContent() + ";\n" +                           //tested with gmail
+                                "Birth time: " + note.getBirthTime() + ";\n" +
+                                "Alarm time: " + note.getAlarmTime();
+                        Uri uriToSend= Uri.fromFile(new File(note.getImageUrl()));
+                        String chooserName="Share note";
+
+                        Intent sharingIntent=new Intent(Intent.ACTION_SEND);
+                        sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        sharingIntent.putExtra(Intent.EXTRA_TEXT,dataToSend);
+                        sharingIntent.setType("image/*");
+                        sharingIntent.putExtra(Intent.EXTRA_STREAM,uriToSend);
+                        startActivity(Intent.createChooser(sharingIntent, chooserName));
                         break;
                     }
                     case R.id.iv_bin: {
@@ -107,12 +126,13 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
             String imageUrl = note.getImageUrl();
             Intent data = new Intent();
             data.putExtra(getString(R.string.note_url_key), imageUrl);
-            Log.d("image url:",imageUrl);
+            Log.d("image url:", imageUrl);
 
             if (!imageUrl.equals("NULL")) {
                 if (!imageUrl.startsWith("content://")) {
                     new ImageLoadingTask(INITIAL_LOADING_TYPE_1).execute(data);
-                };
+                }
+                ;
             } else {
                 ivImage.setVisibility(View.GONE);
             }
@@ -138,8 +158,8 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
     public void handleDeletion() {
         deletionAlertDialog.dismiss();
 
-        Intent intent=new Intent();
-        intent.putExtra(getString(R.string.note_id_key),noteID);
+        Intent intent = new Intent();
+        intent.putExtra(getString(R.string.note_id_key), noteID);
 
         setResult(MainActivity.EDITING_DELETE, intent);
         finish();
