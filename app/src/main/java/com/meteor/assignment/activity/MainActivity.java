@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.meteor.assignment.adapter.MainActivityRvAdapter;
+import com.meteor.assignment.configuration.ActivityConfiguration;
 import com.meteor.assignment.db.NoteTable;
 import com.meteor.assignment.model.Note;
 
@@ -114,6 +115,12 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.mainactivity_menu, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getWindow().setBackgroundDrawable(ActivityConfiguration.getInstance().windowBackground);
     }
 
     @Override

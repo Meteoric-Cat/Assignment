@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.meteor.assignment.activity.R;
 
-public class CameraOptionDialog extends DialogFragment implements View.OnClickListener {
+public class CameraOptionDialog extends DialogFragment implements View.OnClickListener {            //or implement as a CreatingActivity's inner class
     private TextView tvTakePhoto, tvChoosePhoto;
     private ClickHandler clickHandler;
 

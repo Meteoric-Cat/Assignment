@@ -23,6 +23,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.meteor.assignment.configuration.ActivityConfiguration;
+import com.meteor.assignment.fragment.BackgroundColorDialog;
 import com.meteor.assignment.fragment.CameraOptionDialog;
 import com.meteor.assignment.model.Note;
 
@@ -38,6 +40,7 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
     protected static final String HM_FORMAT = "HH:mm";
 
     protected static final String CAMERA_OPTION_DIALOG = "Camera dialog";
+    protected static final String BACKGROUND_COLOR_DIALOG="Background dialog";
 
     protected static final int INITIAL_LOADING_TYPE_1 = 1;
     protected static final int INITIAL_LOADING_TYPE_2 = 2;
@@ -45,7 +48,7 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
     protected static final int GALLERY_LOADING_TYPE = 4;
 
     protected static final String IMAGE_LOADING_EXCEPTION = "Can't load the image";                 //display to user
-    protected static final String IMAGE_TAKING_EXCEPTION = "Can't create image with camera";
+    //protected static final String IMAGE_TAKING_EXCEPTION = "Can't create image with camera";
     protected static final String IMAGE_LOADING_ANNOUNCEMENT = "Reopen to see the added image.";
 
     protected static final int INVALID_NOTE_ID = -1;
@@ -58,6 +61,7 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
     protected ImageView ivImage;
 
     protected CameraOptionDialog cameraOptionDialog;
+    protected BackgroundColorDialog backgroundColorDialog;
 
     protected Note note;
     protected int noteID;
@@ -81,6 +85,7 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
         ivImage = findViewById(R.id.iv_photo);
 
         cameraOptionDialog = new CameraOptionDialog();
+        backgroundColorDialog=new BackgroundColorDialog();
     }
 
     protected void initLogicComponents() {
@@ -90,6 +95,8 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
     @Override
     protected void onStart() {
         super.onStart();
+        getWindow().setBackgroundDrawable(ActivityConfiguration.getInstance().windowBackground);
+
         updateTimeView();
 
         Intent intent = getIntent();
@@ -138,6 +145,10 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
 
                 setResult(getResources().getInteger(R.integer.CREATING_OK), intent);
                 finish();
+                break;
+            }
+            case R.id.mi_color: {
+                backgroundColorDialog.show(getSupportFragmentManager(), BACKGROUND_COLOR_DIALOG);
                 break;
             }
             case R.id.mi_camera: {

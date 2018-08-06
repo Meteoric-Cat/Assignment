@@ -16,7 +16,8 @@
     <string name="dag_camera_title">Insert Picture</string>
     <string name="tv_takePhoto">Take Photo</string>
     <string name="tv_choosePhoto">Choose Photo</string>
-
+    <!--ThemeColorDialog-->
+    <string name="dag_color_title">Choose Color</string>
 
     <!--Editing Activity-->
     <!--DeletionAlertDialog-->
