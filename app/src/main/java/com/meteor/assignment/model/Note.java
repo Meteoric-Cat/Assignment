@@ -2,13 +2,12 @@ package com.meteor.assignment.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 public class Note implements Parcelable {
     private String title, content, birthTime, imageUrl, alarmTime;
 
     public Note() {
-        String initialValue="NULL";
+        String initialValue = "NULL";
         this.title = initialValue;
         this.content = initialValue;
         this.birthTime = initialValue;

@@ -1,7 +1,11 @@
 package com.meteor.assignment.activity;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -37,6 +41,7 @@ import com.meteor.assignment.configuration.ActivityConfiguration;
 import com.meteor.assignment.fragment.BackgroundColorDialog;
 import com.meteor.assignment.fragment.CameraOptionDialog;
 import com.meteor.assignment.model.Note;
+import com.meteor.assignment.service.AlarmNotificationReceiver;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -67,6 +72,11 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
     protected static final int IMAGE_WIDTH = 200;
     protected static final int IMAGE_HEIGHT = 200;
 
+    protected static final int TODAY_POSITION = 0;
+    protected static final int TOMORROW_POSITION = 1;
+    protected static final int NEXT_WEEK_POSITION = 2;
+    protected static final int OTHER_POSITION = 3;
+
     protected TextView tvTime, tvAlarm;
     protected EditText etTitle, etContent;
     protected ImageView ivImage, ivSetterClose;
@@ -84,6 +94,7 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
 
     protected Note note;
     protected int noteID;
+    protected int maxNoteID;
     //protected boolean childCheck=false;                                                           //use instead of instanceof function
 
     @Override
@@ -133,7 +144,7 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
 
         dateAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, dateData);
         dateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spDMYPicker =findViewById(R.id.sp_dmyPicker);
+        spDMYPicker = findViewById(R.id.sp_dmyPicker);
         spDMYPicker.setAdapter(dateAdapter);
 
         values = getResources().getStringArray(R.array.sp_hmPicker);
@@ -144,7 +155,7 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
 
         timeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, timeData);
         timeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spHMPicker =findViewById(R.id.sp_hmPicker);
+        spHMPicker = findViewById(R.id.sp_hmPicker);
         spHMPicker.setAdapter(timeAdapter);
 
         ivSetterClose = findViewById(R.id.iv_setterClose);
@@ -211,22 +222,22 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
         AdapterView.OnItemSelectedListener onItemSelectedListenerListener = new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String currentItem = null;
-                String lastItem = null;
+                //String currentItem = null;
+                //String lastItem = null;
                 switch (parent.getId()) {
                     case R.id.sp_dmyPicker: {
-                        currentItem = dateData.get(position);
-                        lastItem = dateData.getLast();
-                        Log.d(currentItem, lastItem);
-                        if (currentItem.equals(lastItem)) {
+                        //currentItem = dateData.get(position);
+                        //lastItem = dateData.getLast();
+                        //Log.d(currentItem, lastItem);
+                        if (id == dateData.size() - 1) {
                             datePickerDialog.show();
                         }
                         break;
                     }
                     case R.id.sp_hmPicker: {
-                        currentItem = timeData.get(position);
-                        lastItem = timeData.getLast();
-                        if (currentItem.equals(lastItem)) {
+                        //currentItem = timeData.get(position);
+                        //lastItem = timeData.getLast();
+                        if (id == timeData.size() - 1) {
                             timePickerDialog.show();
                         }
                         break;
@@ -260,7 +271,9 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
         super.onStart();
         getWindow().setBackgroundDrawable(ActivityConfiguration.getInstance().windowBackground);
 
-        updateTimeView();
+        if (!(this instanceof EditingActivity)) {
+            updateTimeView();
+        }
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -296,11 +309,12 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
 
                 note.setTitle(title);
                 note.setContent(content);
-                note.setBirthTime(tvTime.getText().toString());
-
                 if (etTitle.getText().toString().equals(INVALID_INPUT)) {
                     note.setTitle(note.getContent());
                 }
+                note.setBirthTime(tvTime.getText().toString());
+                Calendar alarmTime = setAlarmTimeForNote();
+                setAlarmTaskForSystem(alarmTime);
 
                 Intent intent = new Intent();
                 intent.putExtra(getString(R.string.note_key), note);
@@ -322,6 +336,76 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
                 return false;
         }
         return true;
+    }
+
+    protected Calendar setAlarmTimeForNote() {
+        if (tvAlarm.getVisibility() != View.VISIBLE) {
+            String alarmTime = null;
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DMY_FORMAT);
+            Calendar now = Calendar.getInstance();
+            Calendar value = (Calendar) now.clone();
+            String[] temp;
+
+            switch (spDMYPicker.getSelectedItemPosition()) {
+                case TODAY_POSITION: {
+                    alarmTime = simpleDateFormat.format(value.getTime());
+                    break;
+                }
+                case TOMORROW_POSITION: {
+                    int oneDay = 1;
+                    value.add(Calendar.DAY_OF_YEAR, oneDay);
+                    alarmTime = simpleDateFormat.format(value);
+                    break;
+                }
+                case NEXT_WEEK_POSITION: {
+                    int oneWeek = 7;
+                    value.add(Calendar.DAY_OF_YEAR, oneWeek);
+                    alarmTime = simpleDateFormat.format(value);
+                    break;
+                }
+                case OTHER_POSITION: {
+                    alarmTime = spDMYPicker.getSelectedItem().toString();
+                    Log.d("OTHER:", alarmTime);
+                    temp = alarmTime.split("/");
+
+                    value.set(Calendar.DAY_OF_MONTH, Integer.parseInt(temp[0]));
+                    value.set(Calendar.MONTH, Integer.parseInt(temp[1]));
+                    value.set(Calendar.YEAR, Integer.parseInt(temp[2]));
+                    break;
+                }
+            }
+
+            temp = spHMPicker.getSelectedItem().toString().split(":");
+            value.set(Calendar.HOUR_OF_DAY, Integer.parseInt(temp[0]));
+            value.set(Calendar.MINUTE, Integer.parseInt(temp[1]));
+
+            alarmTime = alarmTime + " " + spHMPicker.getSelectedItem().toString();
+            Log.d("ALARM TIME:", alarmTime);
+            note.setAlarmTime(alarmTime);
+
+            if (value.compareTo(now) >= 0) {
+                return value;
+            }
+        } else {
+            note.setAlarmTime("NULL");
+        }
+        return null;
+    }
+
+    protected void setAlarmTaskForSystem(Calendar alarmTime) {
+        if (alarmTime == null) {
+            return;
+        }
+
+        Intent intent = new Intent();
+        intent.setAction(AlarmNotificationReceiver.ACCEPTED_ACTION);
+        intent.putExtra(getString(R.string.broadcast_note_key), note);
+        intent.putExtra(getString(R.string.broadcast_note_id_key), noteID);
+        intent.putExtra(getString(R.string.broadcast_max_note_id_key), maxNoteID);
+        PendingIntent broadcastIntent = PendingIntent.getBroadcast(this, noteID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime.getTimeInMillis(), broadcastIntent);
     }
 
     @Override
@@ -445,10 +529,7 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
         private Bitmap handleGalleryLoading(Intent intent) {
             try {
                 Uri imageUri = intent.getData();
-                //Log.d("URI:", imageUri.toString());
-//                note.setImageUrl(imageUri.toString());
-//                //getContentResolver.openInputStream does not work when open editing activity because of permission denial
-//                Bitmap bitmap = getFileBitmapFromUri(imageUri);
+                //getContentResolver.openInputStream does not work when open editing activity because of permission denial
 
                 BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inPreferredConfig = Bitmap.Config.ARGB_8888;
@@ -538,6 +619,8 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
     }
 
     public static class CustomSpinner extends AppCompatSpinner {
+        private boolean startFlag;
+
         public CustomSpinner(Context context) {
             super(context);
         }
@@ -550,8 +633,15 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
             super(context, attributeSet, defStyleAttr);
         }
 
+        public void setStartFlag(boolean startFlag) {
+            this.startFlag = startFlag;
+        }
+
         @Override
         public void setSelection(int position, boolean animate) {
+            if (startFlag) {
+                return;
+            }
             super.setSelection(position, animate);
             if (position == getSelectedItemPosition()) {
                 getOnItemSelectedListener().onItemSelected(this, getSelectedView(), position, getSelectedItemId());
@@ -560,6 +650,9 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
 
         @Override
         public void setSelection(int position) {
+            if (startFlag) {
+                return;
+            }
             super.setSelection(position);
             if (position == getSelectedItemPosition()) {
                 getOnItemSelectedListener().onItemSelected(this, getSelectedView(), position, getSelectedItemId());

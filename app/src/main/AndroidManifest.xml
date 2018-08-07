@@ -41,6 +41,13 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths"/>
         </provider>
+
+        <receiver android:name="com.meteor.assignment.service.AlarmNotificationReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.meteor.assignment.CREATE_NOTIFICATION"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

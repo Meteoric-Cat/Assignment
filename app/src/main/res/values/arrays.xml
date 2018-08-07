@@ -4,6 +4,7 @@
     <string-array name="sp_dmyPicker">
         <item>Today</item>
         <item>Tomorrow</item>
+        <item>NextWeek</item>
         <item>Other</item>
     </string-array>
 

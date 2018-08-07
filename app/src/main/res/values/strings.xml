@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">Note</string>
 
+    <!--Notification system-->
+    <string name="broadcast_note_key">Note of the void</string>
+    <string name="broadcast_note_id_key">Note id of the void</string>
+    <string name="broadcast_max_note_id_key">Max note id of the void</string>
+
     <!--Parcel key-->
     <string name="note_key">Supernote</string>
     <string name="note_id_key">SuperID</string>

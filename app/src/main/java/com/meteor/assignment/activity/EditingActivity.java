@@ -27,8 +27,6 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
     private BottomNavigationView bottomNavigationView;
     private DeletionAlertDialog deletionAlertDialog;
 
-    private int maxNoteID;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //this.childCheck=true;
@@ -40,7 +38,7 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
 
     @Override
     protected void initUIViews() {
-        Log.d("CHILD:","GO HERE");
+        Log.d("CHILD:", "GO HERE");
         super.initUIViews();                                                                      //called in super.onCreate
         bottomNavigationView = findViewById(R.id.bnv_bottomMenu);
         deletionAlertDialog = new DeletionAlertDialog();
@@ -62,14 +60,14 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
                                 "Content: " + note.getContent() + ";\n" +                           //tested with gmail
                                 "Birth time: " + note.getBirthTime() + ";\n" +
                                 "Alarm time: " + note.getAlarmTime();
-                        Uri uriToSend= Uri.fromFile(new File(note.getImageUrl()));
-                        String chooserName="Share note";
+                        Uri uriToSend = Uri.fromFile(new File(note.getImageUrl()));
+                        String chooserName = "Share note";
 
-                        Intent sharingIntent=new Intent(Intent.ACTION_SEND);
+                        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                         sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        sharingIntent.putExtra(Intent.EXTRA_TEXT,dataToSend);
+                        sharingIntent.putExtra(Intent.EXTRA_TEXT, dataToSend);
                         sharingIntent.setType("image/*");
-                        sharingIntent.putExtra(Intent.EXTRA_STREAM,uriToSend);
+                        sharingIntent.putExtra(Intent.EXTRA_STREAM, uriToSend);
                         startActivity(Intent.createChooser(sharingIntent, chooserName));
                         break;
                     }
@@ -113,7 +111,13 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
         Intent intent = getIntent();
         if (intent != null) {
             note = intent.getParcelableExtra(getString(R.string.note_key));
-            maxNoteID = intent.getIntExtra(getString(R.string.max_id_key), INVALID_NOTE_ID);
+            if (note == null) {
+                note = intent.getParcelableExtra(getString(R.string.broadcast_note_key));
+                noteID = intent.getIntExtra(getString(R.string.broadcast_note_id_key), INVALID_NOTE_ID);
+                maxNoteID = intent.getIntExtra(getString(R.string.broadcast_max_note_id_key), INVALID_NOTE_ID);
+            } else {
+                maxNoteID = intent.getIntExtra(getString(R.string.max_id_key), INVALID_NOTE_ID);
+            }
 
             updateContentUIViews();
             tweakBottomNavigationView();
@@ -124,6 +128,25 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
         if (note != null) {
             etTitle.setText(note.getTitle());
             etContent.setText(note.getContent());
+            tvTime.setText(note.getBirthTime());
+            if (!note.getAlarmTime().equals("NULL")) {
+                tvAlarm.setVisibility(View.GONE);
+                changeAlarmGroupVisibility(View.VISIBLE);
+
+                String[] temp = note.getAlarmTime().split(" ");
+
+                spDMYPicker.setStartFlag(true);
+                dateData.set(dateData.size() - 1, temp[0]);
+                dateAdapter.notifyDataSetChanged();
+                spDMYPicker.setSelection(dateAdapter.getCount());
+                spDMYPicker.setStartFlag(false);
+
+                spHMPicker.setStartFlag(true);
+                timeData.set(timeData.size() - 1, temp[1]);
+                timeAdapter.notifyDataSetChanged();
+                spHMPicker.setSelection(timeAdapter.getCount());
+                spHMPicker.setStartFlag(false);
+            }
 
             String imageUrl = note.getImageUrl();
             Intent data = new Intent();
@@ -134,7 +157,6 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
                 if (!imageUrl.startsWith("content://")) {
                     new ImageLoadingTask(INITIAL_LOADING_TYPE_1).execute(data);
                 }
-                ;
             } else {
                 ivImage.setVisibility(View.GONE);
             }
@@ -155,6 +177,15 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
 
         bottomNavigationView.getMenu().getItem(nextItemID).getIcon().setAlpha(alphaChannel);
         bottomNavigationView.getMenu().getItem(nextItemID).setEnabled(availability);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     public void handleDeletion() {
@@ -180,7 +211,7 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
 
                     note.setTitle(cursor.getString(cursor.getColumnIndex(NoteTable.getInstance().TITLE)));
                     note.setContent(cursor.getString(cursor.getColumnIndex(NoteTable.getInstance().CONTENT)));
-                    //note.setBirthTime(cursor.getString(cursor.getColumnIndex(NoteTable.getInstance().BIRTH_TIME)));
+                    note.setBirthTime(cursor.getString(cursor.getColumnIndex(NoteTable.getInstance().BIRTH_TIME)));
                     note.setImageUrl(cursor.getString(cursor.getColumnIndex(NoteTable.getInstance().IMAGE_URL)));
                     note.setAlarmTime(cursor.getString(cursor.getColumnIndex(NoteTable.getInstance().ALARM_TIME)));
                     noteID = integers[0] - 1;
