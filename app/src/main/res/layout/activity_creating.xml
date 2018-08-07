@@ -66,9 +66,9 @@
         android:textColor="@color/colorLightGreen"
         android:textStyle="bold" />
 
-    <Spinner
+    <view class="com.meteor.assignment.activity.CreatingActivity$CustomSpinner"
         android:id="@+id/sp_dmyPicker"
-        android:layout_width="100dp"
+        android:layout_width="140dp"
         android:layout_height="30dp"
         android:layout_alignTop="@id/iv_clockIcon"
         android:layout_marginTop="10dp"
@@ -76,7 +76,7 @@
         android:background="@color/colorRedGray"
         android:visibility="gone"/>
 
-    <Spinner
+    <view class="com.meteor.assignment.activity.CreatingActivity$CustomSpinner"
         android:id="@+id/sp_hmPicker"
         android:layout_width="100dp"
         android:layout_height="30dp"

@@ -3,6 +3,7 @@ package com.meteor.assignment.activity;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -15,7 +16,9 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatSpinner;
 import android.text.TextUtils;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,9 +26,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -40,6 +43,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.LinkedList;
 
 public class CreatingActivity extends AppCompatActivity implements CameraOptionDialog.ClickHandler {
     protected static final String INVALID_INPUT = "";
@@ -66,10 +70,14 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
     protected TextView tvTime, tvAlarm;
     protected EditText etTitle, etContent;
     protected ImageView ivImage, ivSetterClose;
-    protected Spinner spDMYPicker, spHMPicker;
+    protected CustomSpinner spDMYPicker, spHMPicker;
 
     protected CameraOptionDialog cameraOptionDialog;
     protected BackgroundColorDialog backgroundColorDialog;
+
+    protected LinkedList<String> dateData, timeData;
+    protected ArrayAdapter<String> dateAdapter, timeAdapter;
+    protected DatePicker datePicker;
     protected DatePickerDialog datePickerDialog;
     protected TimePicker timePicker;
     protected TimePickerDialog timePickerDialog;
@@ -106,24 +114,38 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
 
         cameraOptionDialog = new CameraOptionDialog();
         backgroundColorDialog = new BackgroundColorDialog();
-        datePickerDialog = new DatePickerDialog(this);
 
-        timePicker=new TimePicker(this);
+        datePickerDialog = new DatePickerDialog(this);
+        datePicker = datePickerDialog.getDatePicker();
+
+        timePicker = new TimePicker(this);
         timePicker.setIs24HourView(true);
         timePickerDialog = new TimePickerDialog(this, null, 0, 0, true);
         timePickerDialog.setView(timePicker);
     }
 
     protected void initAlarmGroup() {
-        spDMYPicker = findViewById(R.id.sp_dmyPicker);
-        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(this, R.array.sp_dmyPicker, android.R.layout.simple_spinner_item);
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spDMYPicker.setAdapter(arrayAdapter);
+        String[] values = getResources().getStringArray(R.array.sp_dmyPicker);
+        dateData = new LinkedList<>();
+        for (String temp : values) {
+            dateData.add(temp);
+        }
 
-        spHMPicker = findViewById(R.id.sp_hmPicker);
-        arrayAdapter = ArrayAdapter.createFromResource(this, R.array.sp_hmPicker, android.R.layout.simple_spinner_item);
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spHMPicker.setAdapter(arrayAdapter);
+        dateAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, dateData);
+        dateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spDMYPicker =findViewById(R.id.sp_dmyPicker);
+        spDMYPicker.setAdapter(dateAdapter);
+
+        values = getResources().getStringArray(R.array.sp_hmPicker);
+        timeData = new LinkedList<>();
+        for (String temp : values) {
+            timeData.add(temp);
+        }
+
+        timeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, timeData);
+        timeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spHMPicker =findViewById(R.id.sp_hmPicker);
+        spHMPicker.setAdapter(timeAdapter);
 
         ivSetterClose = findViewById(R.id.iv_setterClose);
     }
@@ -134,12 +156,31 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
         initOnItemSelectedListeners();
     }
 
-    protected void initDialogListeners(){
-        String btnPositive="Ok";
+    protected void initDialogListeners() {
+        String btnPositive = "Ok";
+
+        datePickerDialog.setButton(DialogInterface.BUTTON_POSITIVE, btnPositive, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                String date = String.format("%s/%s/%s",
+                        ((datePicker.getDayOfMonth() < 10) ? "0" : "") + datePicker.getDayOfMonth(),
+                        ((datePicker.getMonth() < 10) ? "0" : "") + datePicker.getMonth(),
+                        ((datePicker.getYear()))
+                );
+
+                dateData.set(dateData.size() - 1, date);
+                dateAdapter.notifyDataSetChanged();
+            }
+        });
+
         timePickerDialog.setButton(DialogInterface.BUTTON_POSITIVE, btnPositive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Toast.makeText(getApplicationContext(),timePicker.getHour()+":"+timePicker.getMinute(),Toast.LENGTH_SHORT).show();
+                String time = ((timePicker.getHour() < 10) ? "0" : "") + timePicker.getHour() + ":" +
+                        ((timePicker.getMinute() < 10) ? "0" : "") + timePicker.getMinute();
+
+                timeData.set(timeData.size() - 1, time);
+                timeAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -170,17 +211,22 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
         AdapterView.OnItemSelectedListener onItemSelectedListenerListener = new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String currentItem = parent.getItemAtPosition(position).toString();
-                String lastItem = parent.getItemAtPosition(parent.getCount() - 1).toString();
+                String currentItem = null;
+                String lastItem = null;
                 switch (parent.getId()) {
                     case R.id.sp_dmyPicker: {
+                        currentItem = dateData.get(position);
+                        lastItem = dateData.getLast();
+                        Log.d(currentItem, lastItem);
                         if (currentItem.equals(lastItem)) {
                             datePickerDialog.show();
                         }
                         break;
                     }
                     case R.id.sp_hmPicker: {
-                        if (currentItem.equals(lastItem)){
+                        currentItem = timeData.get(position);
+                        lastItem = timeData.getLast();
+                        if (currentItem.equals(lastItem)) {
                             timePickerDialog.show();
                         }
                         break;
@@ -487,6 +533,36 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
                 }
             } else {
                 Toast.makeText(getApplicationContext(), IMAGE_LOADING_EXCEPTION, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public static class CustomSpinner extends AppCompatSpinner {
+        public CustomSpinner(Context context) {
+            super(context);
+        }
+
+        public CustomSpinner(Context context, AttributeSet attributeSet) {
+            super(context, attributeSet);
+        }
+
+        public CustomSpinner(Context context, AttributeSet attributeSet, int defStyleAttr) {
+            super(context, attributeSet, defStyleAttr);
+        }
+
+        @Override
+        public void setSelection(int position, boolean animate) {
+            super.setSelection(position, animate);
+            if (position == getSelectedItemPosition()) {
+                getOnItemSelectedListener().onItemSelected(this, getSelectedView(), position, getSelectedItemId());
+            }
+        }
+
+        @Override
+        public void setSelection(int position) {
+            super.setSelection(position);
+            if (position == getSelectedItemPosition()) {
+                getOnItemSelectedListener().onItemSelected(this, getSelectedView(), position, getSelectedItemId());
             }
         }
     }
