@@ -43,7 +43,8 @@
         </provider>
 
         <receiver android:name="com.meteor.assignment.service.AlarmNotificationReceiver"
-            android:exported="true">
+            android:exported="true"
+            android:enabled="true">
             <intent-filter>
                 <action android:name="com.meteor.assignment.CREATE_NOTIFICATION"/>
             </intent-filter>

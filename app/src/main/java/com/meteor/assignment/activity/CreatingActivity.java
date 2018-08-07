@@ -3,8 +3,6 @@ package com.meteor.assignment.activity;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -95,6 +93,7 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
     protected Note note;
     protected int noteID;
     protected int maxNoteID;
+    protected int startCount;
     //protected boolean childCheck=false;                                                           //use instead of instanceof function
 
     @Override
@@ -180,6 +179,7 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
                 );
 
                 dateData.set(dateData.size() - 1, date);
+                Log.d("Adapter:", "Hellero");
                 dateAdapter.notifyDataSetChanged();
             }
         });
@@ -229,6 +229,10 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
                         //currentItem = dateData.get(position);
                         //lastItem = dateData.getLast();
                         //Log.d(currentItem, lastItem);
+                        if (startCount < 6) {
+                            startCount++;
+                            return;
+                        }
                         if (id == dateData.size() - 1) {
                             datePickerDialog.show();
                         }
@@ -237,11 +241,16 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
                     case R.id.sp_hmPicker: {
                         //currentItem = timeData.get(position);
                         //lastItem = timeData.getLast();
+                        if (startCount < 6) {
+                            startCount++;
+                            return;
+                        }
                         if (id == timeData.size() - 1) {
                             timePickerDialog.show();
                         }
                         break;
                     }
+
                 }
 
             }
@@ -259,11 +268,11 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
         ivSetterClose.setVisibility(visibility);
         spHMPicker.setVisibility(visibility);
         spDMYPicker.setVisibility(visibility);
-
     }
 
     protected void initLogicComponents() {
         note = new Note();
+        startCount = 6;
     }
 
     @Override
@@ -314,6 +323,7 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
                 }
                 note.setBirthTime(tvTime.getText().toString());
                 Calendar alarmTime = setAlarmTimeForNote();
+                Log.d("Time", new SimpleDateFormat(DMY_FORMAT + " " + HM_FORMAT).format(alarmTime.getTime()));
                 setAlarmTaskForSystem(alarmTime);
 
                 Intent intent = new Intent();
@@ -340,6 +350,11 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
 
     protected Calendar setAlarmTimeForNote() {
         if (tvAlarm.getVisibility() != View.VISIBLE) {
+            String INVALID_TIME = "other";
+            if (spHMPicker.getSelectedItem().toString().equalsIgnoreCase(INVALID_TIME)) {
+                return null;
+            }
+
             String alarmTime = null;
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DMY_FORMAT);
             Calendar now = Calendar.getInstance();
@@ -349,10 +364,12 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
             switch (spDMYPicker.getSelectedItemPosition()) {
                 case TODAY_POSITION: {
                     alarmTime = simpleDateFormat.format(value.getTime());
+                    Log.d("hahaTime", new SimpleDateFormat(DMY_FORMAT + " " + HM_FORMAT).format(value.getTime()));
                     break;
                 }
                 case TOMORROW_POSITION: {
                     int oneDay = 1;
+                    Log.d("haaaaaaaTime", new SimpleDateFormat(DMY_FORMAT + " " + HM_FORMAT).format(value.getTime()));
                     value.add(Calendar.DAY_OF_YEAR, oneDay);
                     alarmTime = simpleDateFormat.format(value);
                     break;
@@ -376,6 +393,7 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
             }
 
             temp = spHMPicker.getSelectedItem().toString().split(":");
+            Log.d("Time", new SimpleDateFormat(DMY_FORMAT + " " + HM_FORMAT).format(value.getTime()));
             value.set(Calendar.HOUR_OF_DAY, Integer.parseInt(temp[0]));
             value.set(Calendar.MINUTE, Integer.parseInt(temp[1]));
 
@@ -384,6 +402,7 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
             note.setAlarmTime(alarmTime);
 
             if (value.compareTo(now) >= 0) {
+                Log.d("Time", new SimpleDateFormat(DMY_FORMAT + " " + HM_FORMAT).format(value.getTime()));
                 return value;
             }
         } else {
@@ -398,14 +417,20 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
         }
 
         Intent intent = new Intent();
+        Note newNote = new Note(note);
+        int newNoteID = noteID;
+        int max = maxNoteID;
         intent.setAction(AlarmNotificationReceiver.ACCEPTED_ACTION);
-        intent.putExtra(getString(R.string.broadcast_note_key), note);
-        intent.putExtra(getString(R.string.broadcast_note_id_key), noteID);
-        intent.putExtra(getString(R.string.broadcast_max_note_id_key), maxNoteID);
+        intent.putExtra(getString(R.string.broadcast_note_key), newNote);
+        intent.putExtra(getString(R.string.broadcast_note_id_key), newNoteID);
+        intent.putExtra(getString(R.string.broadcast_max_note_id_key), max);
         PendingIntent broadcastIntent = PendingIntent.getBroadcast(this, noteID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Log.d("Time", new SimpleDateFormat(DMY_FORMAT + " " + HM_FORMAT).format(alarmTime.getTime()));
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime.getTimeInMillis(), broadcastIntent);
+        //sendBroadcast(intent);
     }
 
     @Override
@@ -619,7 +644,6 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
     }
 
     public static class CustomSpinner extends AppCompatSpinner {
-        private boolean startFlag;
 
         public CustomSpinner(Context context) {
             super(context);
@@ -633,15 +657,8 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
             super(context, attributeSet, defStyleAttr);
         }
 
-        public void setStartFlag(boolean startFlag) {
-            this.startFlag = startFlag;
-        }
-
         @Override
         public void setSelection(int position, boolean animate) {
-            if (startFlag) {
-                return;
-            }
             super.setSelection(position, animate);
             if (position == getSelectedItemPosition()) {
                 getOnItemSelectedListener().onItemSelected(this, getSelectedView(), position, getSelectedItemId());
@@ -650,9 +667,6 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
 
         @Override
         public void setSelection(int position) {
-            if (startFlag) {
-                return;
-            }
             super.setSelection(position);
             if (position == getSelectedItemPosition()) {
                 getOnItemSelectedListener().onItemSelected(this, getSelectedView(), position, getSelectedItemId());

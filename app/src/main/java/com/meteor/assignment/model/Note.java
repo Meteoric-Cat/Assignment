@@ -15,6 +15,14 @@ public class Note implements Parcelable {
         this.alarmTime = initialValue;
     }
 
+    public Note(Note note) {
+        this.title = note.getTitle();
+        this.content = note.getContent();
+        this.birthTime = note.getBirthTime();
+        this.imageUrl = note.getImageUrl();
+        this.alarmTime = note.getAlarmTime();
+    }
+
     public Note(String title, String content, String birthTime, String imageUrl, String alarmTime) {
         this.title = title;
         this.content = content;

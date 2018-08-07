@@ -27,6 +27,8 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
     private BottomNavigationView bottomNavigationView;
     private DeletionAlertDialog deletionAlertDialog;
 
+    private boolean broadcastCheck = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //this.childCheck=true;
@@ -115,6 +117,7 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
                 note = intent.getParcelableExtra(getString(R.string.broadcast_note_key));
                 noteID = intent.getIntExtra(getString(R.string.broadcast_note_id_key), INVALID_NOTE_ID);
                 maxNoteID = intent.getIntExtra(getString(R.string.broadcast_max_note_id_key), INVALID_NOTE_ID);
+                broadcastCheck = true;
             } else {
                 maxNoteID = intent.getIntExtra(getString(R.string.max_id_key), INVALID_NOTE_ID);
             }
@@ -134,18 +137,15 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
                 changeAlarmGroupVisibility(View.VISIBLE);
 
                 String[] temp = note.getAlarmTime().split(" ");
+                startCount = 0;
 
-                spDMYPicker.setStartFlag(true);
                 dateData.set(dateData.size() - 1, temp[0]);
-                dateAdapter.notifyDataSetChanged();
-                spDMYPicker.setSelection(dateAdapter.getCount());
-                spDMYPicker.setStartFlag(false);
+                dateAdapter.notifyDataSetChanged();                                                 //call set once
+                spDMYPicker.setSelection(dateAdapter.getCount());                                   //call set 2 times
 
-                spHMPicker.setStartFlag(true);
                 timeData.set(timeData.size() - 1, temp[1]);
-                timeAdapter.notifyDataSetChanged();
-                spHMPicker.setSelection(timeAdapter.getCount());
-                spHMPicker.setStartFlag(false);
+                timeAdapter.notifyDataSetChanged();                                                 //call set once
+                spHMPicker.setSelection(timeAdapter.getCount());                                    //call set 2 times
             }
 
             String imageUrl = note.getImageUrl();
@@ -182,10 +182,11 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+        if (broadcastCheck) {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
     }
 
     public void handleDeletion() {
