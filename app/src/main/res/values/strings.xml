@@ -1,14 +1,28 @@
 <resources>
     <string name="app_name">Note</string>
 
+    <!--Notification system-->
+    <string name="broadcast_note_key">Note of the void</string>
+    <string name="broadcast_note_id_key">Note id of the void</string>
+    <string name="broadcast_max_note_id_key">Max note id of the void</string>
+
     <!--Parcel key-->
     <string name="note_key">Supernote</string>
+    <string name="note_id_key">SuperID</string>
+    <string name="note_url_key">Super URL</string>
+    <string name="max_id_key">Max ID</string>
 
     <!--Creating, Editing Activity-->
     <string name="et_titleHint">Title</string>
     <string name="et_contentHint">Note</string>
     <string name="tv_alarmCreator">Alarm</string>
     <string name="mi_newNote">New Note</string>
+    <!--CameraOptionDialog-->
+    <string name="dag_camera_title">Insert Picture</string>
+    <string name="tv_takePhoto">Take Photo</string>
+    <string name="tv_choosePhoto">Choose Photo</string>
+    <!--ThemeColorDialog-->
+    <string name="dag_color_title">Choose Color</string>
 
     <!--Editing Activity-->
     <!--DeletionAlertDialog-->
@@ -16,6 +30,5 @@
     <string name="dag_message">Are you sure you want to delete this note?</string>
     <string name="dag_posButtom">OK</string>
     <string name="dag_nevButton">Cancel</string>
-
 
 </resources>

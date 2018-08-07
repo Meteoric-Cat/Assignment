@@ -12,7 +12,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,6 +20,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.meteor.assignment.adapter.MainActivityRvAdapter;
+import com.meteor.assignment.configuration.ActivityConfiguration;
 import com.meteor.assignment.db.NoteTable;
 import com.meteor.assignment.model.Note;
 
@@ -87,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
 
                     Intent intent = new Intent(MainActivity.this, EditingActivity.class);
                     intent.putExtra(getString(R.string.note_key), rvAdapter.getItem(clickedNoteID));
+                    intent.putExtra(getString(R.string.note_id_key), clickedNoteID);
+                    intent.putExtra(getString(R.string.max_id_key), rvAdapter.getItemCount());
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
                     startActivityForResult(intent, EDITING_REQUEST);
@@ -115,10 +117,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        getWindow().setBackgroundDrawable(ActivityConfiguration.getInstance().windowBackground);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == R.id.mi_add) {
             Intent intent = new Intent(this, CreatingActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra(getString(R.string.note_id_key), rvAdapter.getItemCount());
             startActivityForResult(intent, getResources().getInteger(R.integer.CREATING_REQUEST));
             return true;
         }
@@ -142,13 +151,19 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
             case EDITING_REQUEST: {
+                if (data != null) {
+                    clickedNoteID = data.getIntExtra(getString(R.string.note_id_key), clickedNoteID);
+                }
                 switch (resultCode) {
                     case CREATING_OK: {
-                        Note note = data.getParcelableExtra(getString(R.string.note_key));
-                        if (note != null) {
-                            DatabaseTask databaseTask = new DatabaseTask(UPDATE_TYPE, clickedNoteID + 1,
-                                    note, false, NoteTable.getInstance().TABLE_URI);
-                            databaseTask.execute();
+                        if (data != null) {
+                            Note note = data.getParcelableExtra(getString(R.string.note_key));
+
+                            if (note != null) {
+                                DatabaseTask databaseTask = new DatabaseTask(UPDATE_TYPE, clickedNoteID + 1,
+                                        note, false, NoteTable.getInstance().TABLE_URI);
+                                databaseTask.execute();
+                            }
                         }
                         break;
                     }
@@ -156,11 +171,13 @@ public class MainActivity extends AppCompatActivity {
                         DatabaseTask databaseTask = new DatabaseTask(DELETE_TYPE, clickedNoteID + 1,
                                 null, false, NoteTable.getInstance().TABLE_URI);
                         databaseTask.execute();
-                        Log.d("TASK:","executed");
+                        //Log.d("TASK:","executed");
                         break;
                     }
                     case EDITING_NEW_NOTE: {
                         Intent intent = new Intent(this, CreatingActivity.class);
+                        intent.putExtra(getString(R.string.note_id_key), rvAdapter.getItemCount());
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivityForResult(intent, CREATING_REQUEST);
                         break;
                     }
@@ -194,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
             resultFlag = false;
             if (this.rowID > MIN_ID) {
                 this.databaseUri = ContentUris.withAppendedId(this.databaseUri, rowID);
-                Log.d("URI:",this.databaseUri.toString());
+                //Log.d("URI:",this.databaseUri.toString());
             }
 
             switch (this.taskType) {
@@ -243,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 amount = getContentResolver().delete(this.databaseUri, null, null);
                 resultFlag = true;
-                Log.d("Amount:",String.valueOf(amount));
+                //Log.d("Amount:",String.valueOf(amount));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -324,7 +341,7 @@ public class MainActivity extends AppCompatActivity {
                 //check uri
                 if (rowID > MIN_ID) {
                     rvAdapter.removeItem(rowID - 1);
-                    Log.d("RESULT:","remove successfully");
+                    //Log.d("RESULT:", "remove successfully");
                 }
                 //else ... (remove all items but that event won't happen
             }

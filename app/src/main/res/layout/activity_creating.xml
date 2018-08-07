@@ -7,12 +7,19 @@
     android:padding="10dp"
     tools:context=".CreatingActivity">
 
+    <ImageView
+        android:id="@+id/iv_photo"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_alignParentLeft="true"
+        android:visibility="gone"/>
+
     <TextView
         android:id="@+id/tv_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
+        android:layout_below="@id/iv_photo"
         android:layout_marginTop="10dp"
         android:textSize="12sp"
         android:textStyle="bold"
@@ -25,6 +32,7 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@id/tv_time"
         android:layout_marginTop="10dp"
+        android:maxLines="1"
         android:textStyle="bold"
         android:textSize="14sp"
         android:textColor="@color/colorPrimary"
@@ -57,5 +65,34 @@
         android:textSize="14sp"
         android:textColor="@color/colorLightGreen"
         android:textStyle="bold" />
+
+    <view class="com.meteor.assignment.activity.CreatingActivity$CustomSpinner"
+        android:id="@+id/sp_dmyPicker"
+        android:layout_width="140dp"
+        android:layout_height="30dp"
+        android:layout_alignTop="@id/iv_clockIcon"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@id/iv_clockIcon"
+        android:background="@color/colorRedGray"
+        android:visibility="gone"/>
+
+    <view class="com.meteor.assignment.activity.CreatingActivity$CustomSpinner"
+        android:id="@+id/sp_hmPicker"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:background="@color/colorRedGray"
+        android:layout_toRightOf="@id/sp_dmyPicker"
+        android:layout_alignTop="@id/sp_dmyPicker"
+        android:layout_marginLeft="10dp"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/iv_setterClose"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_toRightOf="@id/sp_hmPicker"
+        android:layout_alignTop="@id/sp_hmPicker"
+        android:background="@drawable/ic_close"
+        android:visibility="gone"/>
 
 </android.widget.RelativeLayout>

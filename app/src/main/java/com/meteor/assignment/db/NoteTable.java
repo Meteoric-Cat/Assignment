@@ -3,8 +3,6 @@ package com.meteor.assignment.db;
 import android.net.Uri;
 
 public class NoteTable {
-    private static NoteTable instance=new NoteTable();
-
     public String TABLE_URL = "content://" + CustomContentProvider.PROVIDER_NAME + "/notes";
     public Uri TABLE_URI = Uri.parse(TABLE_URL);
     public String TABLE_NAME = "notes";
@@ -24,6 +22,8 @@ public class NoteTable {
                     BIRTH_TIME + " TEXT NOT NULL, " +
                     IMAGE_URL + " TEXT, " +
                     ALARM_TIME + " TEXT" + ");";
+
+    private static NoteTable instance=new NoteTable();
 
     private NoteTable() {
     }
