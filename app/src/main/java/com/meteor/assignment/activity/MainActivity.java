@@ -12,7 +12,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -342,7 +341,7 @@ public class MainActivity extends AppCompatActivity {
                 //check uri
                 if (rowID > MIN_ID) {
                     rvAdapter.removeItem(rowID - 1);
-                    Log.d("RESULT:", "remove successfully");
+                    //Log.d("RESULT:", "remove successfully");
                 }
                 //else ... (remove all items but that event won't happen
             }

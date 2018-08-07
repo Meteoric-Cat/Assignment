@@ -70,10 +70,13 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
     protected static final int IMAGE_WIDTH = 200;
     protected static final int IMAGE_HEIGHT = 200;
 
-    protected static final int TODAY_POSITION = 0;
-    protected static final int TOMORROW_POSITION = 1;
-    protected static final int NEXT_WEEK_POSITION = 2;
-    protected static final int OTHER_POSITION = 3;
+    //protected static final int TODAY_POSITION = 0;
+    //protected static final int TOMORROW_POSITION = 1;
+    //protected static final int NEXT_WEEK_POSITION = 2;
+    //protected static final int OTHER_POSITION = 3;
+    protected static final String TODAY = "Today";
+    protected static final String TOMORROW = "Tomorrow";
+    protected static final String NEXT_WEEK = "NextWeek";
 
     protected TextView tvTime, tvAlarm;
     protected EditText etTitle, etContent;
@@ -106,14 +109,14 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
             setContentView(R.layout.activity_editing);
         }
 
-        Log.d("PARENT:", "START");
+        //Log.d("PARENT:", "START");
         initUIViews();
         initUIListeners();
         initLogicComponents();
     }
 
     protected void initUIViews() {
-        Log.d("PARENT:", "GO HERE");
+        //Log.d("PARENT:", "GO HERE");
         etTitle = findViewById(R.id.et_title);
         etContent = findViewById(R.id.et_content);
         tvTime = findViewById(R.id.tv_time);
@@ -174,12 +177,12 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
             public void onClick(DialogInterface dialogInterface, int i) {
                 String date = String.format("%s/%s/%s",
                         ((datePicker.getDayOfMonth() < 10) ? "0" : "") + datePicker.getDayOfMonth(),
-                        ((datePicker.getMonth() < 10) ? "0" : "") + datePicker.getMonth(),
+                        ((datePicker.getMonth() < 10) ? "0" : "") + (datePicker.getMonth() + 1),
                         ((datePicker.getYear()))
                 );
 
                 dateData.set(dateData.size() - 1, date);
-                Log.d("Adapter:", "Hellero");
+                //Log.d("Adapter:", "Hellero");
                 dateAdapter.notifyDataSetChanged();
             }
         });
@@ -323,7 +326,6 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
                 }
                 note.setBirthTime(tvTime.getText().toString());
                 Calendar alarmTime = setAlarmTimeForNote();
-                Log.d("Time", new SimpleDateFormat(DMY_FORMAT + " " + HM_FORMAT).format(alarmTime.getTime()));
                 setAlarmTaskForSystem(alarmTime);
 
                 Intent intent = new Intent();
@@ -361,44 +363,36 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
             Calendar value = (Calendar) now.clone();
             String[] temp;
 
-            switch (spDMYPicker.getSelectedItemPosition()) {
-                case TODAY_POSITION: {
-                    alarmTime = simpleDateFormat.format(value.getTime());
-                    Log.d("hahaTime", new SimpleDateFormat(DMY_FORMAT + " " + HM_FORMAT).format(value.getTime()));
-                    break;
-                }
-                case TOMORROW_POSITION: {
-                    int oneDay = 1;
-                    Log.d("haaaaaaaTime", new SimpleDateFormat(DMY_FORMAT + " " + HM_FORMAT).format(value.getTime()));
-                    value.add(Calendar.DAY_OF_YEAR, oneDay);
-                    alarmTime = simpleDateFormat.format(value);
-                    break;
-                }
-                case NEXT_WEEK_POSITION: {
-                    int oneWeek = 7;
-                    value.add(Calendar.DAY_OF_YEAR, oneWeek);
-                    alarmTime = simpleDateFormat.format(value);
-                    break;
-                }
-                case OTHER_POSITION: {
-                    alarmTime = spDMYPicker.getSelectedItem().toString();
-                    Log.d("OTHER:", alarmTime);
-                    temp = alarmTime.split("/");
+            //Log.d("POSITION:", spDMYPicker.getSelectedItemPosition() + " ::  " + spHMPicker.getSelectedItemPosition());
+            //switch (spDMYPicker.getSelectedItemPosition()) {                                      //doesn't not work propperly
+            if (spDMYPicker.getSelectedItem().toString().equalsIgnoreCase(TODAY)) {
+                alarmTime = simpleDateFormat.format(value.getTime());
+                //Log.d("hahaTime", new SimpleDateFormat(DMY_FORMAT + " " + HM_FORMAT).format(value.getTime()));
+            } else if (spDMYPicker.getSelectedItem().toString().equalsIgnoreCase(TOMORROW)) {
+                int oneDay = 1;
+                //Log.d("haaaaaaaTime", new SimpleDateFormat(DMY_FORMAT + " " + HM_FORMAT).format(value.getTime()));
+                value.add(Calendar.DAY_OF_YEAR, oneDay);
+                alarmTime = simpleDateFormat.format(value.getTime());
+            } else if (spDMYPicker.getSelectedItem().toString().equalsIgnoreCase(NEXT_WEEK)) {
+                int oneWeek = 7;
+                value.add(Calendar.DAY_OF_YEAR, oneWeek);
+                alarmTime = simpleDateFormat.format(value.getTime());
+            } else {
+                alarmTime = spDMYPicker.getSelectedItem().toString();
+                //Log.d("OTHER:", alarmTime);
+                temp = alarmTime.split("/");
 
-                    value.set(Calendar.DAY_OF_MONTH, Integer.parseInt(temp[0]));
-                    value.set(Calendar.MONTH, Integer.parseInt(temp[1]));
-                    value.set(Calendar.YEAR, Integer.parseInt(temp[2]));
-                    break;
-                }
+                value.set(Calendar.DAY_OF_MONTH, Integer.parseInt(temp[0]));
+                value.set(Calendar.MONTH, Integer.parseInt(temp[1]) - 1);
+                value.set(Calendar.YEAR, Integer.parseInt(temp[2]));
             }
 
             temp = spHMPicker.getSelectedItem().toString().split(":");
-            Log.d("Time", new SimpleDateFormat(DMY_FORMAT + " " + HM_FORMAT).format(value.getTime()));
+            //Log.d("Time", new SimpleDateFormat(DMY_FORMAT + " " + HM_FORMAT).format(value.getTime()));
             value.set(Calendar.HOUR_OF_DAY, Integer.parseInt(temp[0]));
             value.set(Calendar.MINUTE, Integer.parseInt(temp[1]));
 
             alarmTime = alarmTime + " " + spHMPicker.getSelectedItem().toString();
-            Log.d("ALARM TIME:", alarmTime);
             note.setAlarmTime(alarmTime);
 
             if (value.compareTo(now) >= 0) {
@@ -417,19 +411,24 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
         }
 
         Intent intent = new Intent();
-        Note newNote = new Note(note);
-        int newNoteID = noteID;
-        int max = maxNoteID;
         intent.setAction(AlarmNotificationReceiver.ACCEPTED_ACTION);
-        intent.putExtra(getString(R.string.broadcast_note_key), newNote);
-        intent.putExtra(getString(R.string.broadcast_note_id_key), newNoteID);
-        intent.putExtra(getString(R.string.broadcast_max_note_id_key), max);
+        //intent.putExtra(getString(R.string.broadcast_note_key));
+        //intent.putExtra(getString(R.string.broadcast_note_id_key));
+        //intent.putExtra(getString(R.string.broadcast_max_note_id_key));
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(AlarmNotificationReceiver.NOTE_KEY, note);
+        bundle.putInt(AlarmNotificationReceiver.NOTE_ID_KEY, noteID);
+        bundle.putInt(AlarmNotificationReceiver.MAX_NOTE_ID_KEY, maxNoteID);
+        intent.putExtra(AlarmNotificationReceiver.BUNDLE_KEY, bundle);
         PendingIntent broadcastIntent = PendingIntent.getBroadcast(this, noteID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Log.d("Time", new SimpleDateFormat(DMY_FORMAT + " " + HM_FORMAT).format(alarmTime.getTime()));
-
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime.getTimeInMillis(), broadcastIntent);
+        try {
+            alarmManager.cancel(broadcastIntent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmTime.getTimeInMillis(), broadcastIntent);
         //sendBroadcast(intent);
     }
 
@@ -439,9 +438,10 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
 
         if (data != null) {
             if (resultCode == Activity.RESULT_OK) {
-                Log.d("Activity:", "Successful");
+                //Log.d("Activity:", "Successful");
                 new ImageLoadingTask(requestCode).execute(data);
-            } else Log.d("RESULT:", String.valueOf(resultCode));
+            }
+            //else Log.d("RESULT:", String.valueOf(resultCode));
         } else
             Toast.makeText(getApplicationContext(), "Error when read image", Toast.LENGTH_SHORT).show();
     }
@@ -498,7 +498,7 @@ public class CreatingActivity extends AppCompatActivity implements CameraOptionD
             try {
                 String imageUrl = intent.getStringExtra(getString(R.string.note_url_key));
                 Bitmap bitmap = null;
-                Log.d("IMAGE URL:", imageUrl);
+                //Log.d("IMAGE URL:", imageUrl);
                 BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inPreferredConfig = Bitmap.Config.ARGB_8888;
 

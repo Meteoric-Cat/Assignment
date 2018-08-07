@@ -16,6 +16,7 @@ import android.view.View;
 
 import com.meteor.assignment.db.NoteTable;
 import com.meteor.assignment.fragment.DeletionAlertDialog;
+import com.meteor.assignment.service.AlarmNotificationReceiver;
 
 import java.io.File;
 
@@ -40,7 +41,7 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
 
     @Override
     protected void initUIViews() {
-        Log.d("CHILD:", "GO HERE");
+        //Log.d("CHILD:", "GO HERE");
         super.initUIViews();                                                                      //called in super.onCreate
         bottomNavigationView = findViewById(R.id.bnv_bottomMenu);
         deletionAlertDialog = new DeletionAlertDialog();
@@ -114,9 +115,10 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
         if (intent != null) {
             note = intent.getParcelableExtra(getString(R.string.note_key));
             if (note == null) {
-                note = intent.getParcelableExtra(getString(R.string.broadcast_note_key));
-                noteID = intent.getIntExtra(getString(R.string.broadcast_note_id_key), INVALID_NOTE_ID);
-                maxNoteID = intent.getIntExtra(getString(R.string.broadcast_max_note_id_key), INVALID_NOTE_ID);
+                Bundle bundle = intent.getBundleExtra(AlarmNotificationReceiver.BUNDLE_KEY);
+                note = bundle.getParcelable(AlarmNotificationReceiver.NOTE_KEY);
+                noteID = bundle.getInt(AlarmNotificationReceiver.NOTE_ID_KEY);
+                maxNoteID = bundle.getInt(AlarmNotificationReceiver.MAX_NOTE_ID_KEY);
                 broadcastCheck = true;
             } else {
                 maxNoteID = intent.getIntExtra(getString(R.string.max_id_key), INVALID_NOTE_ID);
@@ -151,7 +153,7 @@ public class EditingActivity extends CreatingActivity implements DeletionAlertDi
             String imageUrl = note.getImageUrl();
             Intent data = new Intent();
             data.putExtra(getString(R.string.note_url_key), imageUrl);
-            Log.d("image url:", imageUrl);
+            //Log.d("image url:", imageUrl);
 
             if (!imageUrl.equals("NULL")) {
                 if (!imageUrl.startsWith("content://")) {

@@ -14,26 +14,29 @@ import com.meteor.assignment.model.Note;
 
 public class AlarmNotificationReceiver extends BroadcastReceiver {
     public static final String ACCEPTED_ACTION = "com.meteor.assignment.CREATE_NOTIFICATION";
+    public static final String NOTE_KEY="com.meteor.assignment.note_key";
+    public static final String NOTE_ID_KEY="com.meteor.assignment.note_id_key";
+    public static final String MAX_NOTE_ID_KEY="com.meteor.assignment.max_note_id_key";
+    public static final String BUNDLE_KEY="com.meteor.assignment.hello_world";
 
     @Override
     public void onReceive(Context context, Intent intent) {
         try {
-            String note_key="Note of the void";
-            Note note = intent.getParcelableExtra(note_key);
-            Log.d("RECEIVER", "received message");
+            Note note = intent.getBundleExtra(BUNDLE_KEY).getParcelable(NOTE_KEY);
+            int noteID=intent.getBundleExtra(BUNDLE_KEY).getInt(NOTE_ID_KEY);
+            //Log.d("RECEIVER", "received message");
             if (note != null) {
                 Log.d("RECEIVER:", "received intent");
                 intent.setClass(context, EditingActivity.class);
-                intent.setClass(context, EditingActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                PendingIntent lauchingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+                PendingIntent lauchingIntent = PendingIntent.getActivity(context, noteID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 Notification.Builder builder = new Notification.Builder(context);
                 builder.setSmallIcon(R.drawable.ic_notification_icon)
                         .setContentTitle(note.getTitle())
                         .setContentText(note.getContent())
                         .setContentIntent(lauchingIntent)
-                        .setAutoCancel(false);
+                        .setAutoCancel(false);                                                      //or auto
 
                 NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
                 notificationManager.notify(0, builder.build());
